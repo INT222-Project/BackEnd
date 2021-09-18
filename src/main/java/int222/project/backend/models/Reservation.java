@@ -1,7 +1,11 @@
 package int222.project.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name="reservation")
@@ -11,7 +15,11 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "customerid")
     private Customer customerId;
+    @Temporal(TemporalType.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "UTC")
     private Date paymentDate;
+    @Temporal(TemporalType.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "UTC")
     private Date reservationDate;
     @ManyToOne
     @JoinColumn(name = "paymentmethodid")
@@ -20,11 +28,15 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "repid")
     private Receptionist repId;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "reservno")
+    @MapsId("reservNo")
+    private List<ReservationDetail> reservationDetailList;
 
     public Reservation() {
     }
 
-    public Reservation(String reservNo, Customer customerId, Date paymentDate, Date reservationDate, PaymentMethod paymentMethodId, double subTotal, Receptionist repId) {
+    public Reservation(String reservNo, Customer customerId, Date paymentDate, Date reservationDate, PaymentMethod paymentMethodId, double subTotal, Receptionist repId, List<ReservationDetail> reservationDetailList) {
         this.reservNo = reservNo;
         this.customerId = customerId;
         this.paymentDate = paymentDate;
@@ -32,6 +44,7 @@ public class Reservation {
         this.paymentMethodId = paymentMethodId;
         this.subTotal = subTotal;
         this.repId = repId;
+        this.reservationDetailList = reservationDetailList;
     }
 
     public String getReservNo() {
@@ -88,5 +101,13 @@ public class Reservation {
 
     public void setRepId(Receptionist repId) {
         this.repId = repId;
+    }
+
+    public List<ReservationDetail> getReservationDetailList() {
+        return reservationDetailList;
+    }
+
+    public void setReservationDetailList(List<ReservationDetail> reservationDetailList) {
+        this.reservationDetailList = reservationDetailList;
     }
 }
