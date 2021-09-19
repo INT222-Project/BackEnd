@@ -29,7 +29,7 @@ public class Reservation {
     @JoinColumn(name = "repid")
     private Receptionist repId;
     @JsonManagedReference
-    @OneToMany(mappedBy = "reservno")
+    @OneToMany(mappedBy = "reservNo",cascade = CascadeType.ALL, targetEntity = ReservationDetail.class)
     @MapsId("reservNo")
     private List<ReservationDetail> reservationDetailList;
 

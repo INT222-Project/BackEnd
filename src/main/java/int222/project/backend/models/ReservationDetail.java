@@ -29,7 +29,7 @@ public class ReservationDetail {
     private int numOfRest;
     private double total;
     @JsonManagedReference
-    @OneToMany(mappedBy = "packagedetailid")
+    @OneToMany(mappedBy = "reservDetailId",cascade = CascadeType.ALL,targetEntity = PackageDetail.class)
     @MapsId("reservDetailId")
     private List<PackageDetail> packageDetailList;
 
