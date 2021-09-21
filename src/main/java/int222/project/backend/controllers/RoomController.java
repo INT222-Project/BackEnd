@@ -27,4 +27,21 @@ public class RoomController {
         this.roomRepository.save(room);
     }
 
+    @PutMapping(path = "/edit/{roomId}")
+    public void editRoom(@PathVariable int roomId , @RequestBody Room room){
+        Room temp = roomRepository.findById(roomId).orElse(null);
+        if(temp != null){
+            temp = room;
+            roomRepository.save(temp);
+        }
+    }
+
+    @DeleteMapping(path = "/delete/{roomId}")
+    public void deleteRoom(@PathVariable int roomId){
+        Room temp = roomRepository.findById(roomId).orElse(null);
+        if(temp != null){
+            roomRepository.delete(temp);
+        }
+    }
+
 }
