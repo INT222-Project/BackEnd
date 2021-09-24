@@ -64,4 +64,15 @@ public class Room {
     public void setBedType(String bedType) {
         this.bedType = bedType;
     }
+
+    @Override
+    public String toString() {
+        return "Room{" +
+                "roomId=" + roomId +
+                ", roomNo='" + roomNo + '\'' +
+                ", roomTypeId=" + roomTypeId +
+                ", roomCharge=" + roomCharge +
+                ", bedType='" + bedType + '\'' +
+                '}';
+    }
 }

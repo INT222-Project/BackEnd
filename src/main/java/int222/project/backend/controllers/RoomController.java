@@ -23,6 +23,9 @@ public class RoomController {
 
     @PostMapping(path = "/add")
     public void addRoom(@RequestBody Room room){
+        List<Room> getAllRoom = roomRepository.findAll();
+        int latestRoomId = getAllRoom.get(getAllRoom.size()-1).getRoomId();
+        room.setRoomId(latestRoomId+1);
         System.out.println(room.toString());
         this.roomRepository.save(room);
     }
