@@ -28,7 +28,10 @@ public class RoomController {
         for(int i = 0 ; i < getAllRoom.size() ; i++){
             int id = getAllRoom.get(i).getRoomId();
             int nextId = getAllRoom.get(i+1).getRoomId();
-            if((id+1) != nextId) { latestRoomId = id; }
+            if((id+1) != nextId) {
+                latestRoomId = id;
+                break;
+            }
         }
         if(latestRoomId == 0) latestRoomId = getAllRoom.get(getAllRoom.size()-1).getRoomId();
         room.setRoomId(latestRoomId+1);
