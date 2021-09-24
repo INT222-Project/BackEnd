@@ -23,11 +23,14 @@ public class RoomController {
 
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addRoom(@RequestPart("newRoom") Room room){
+        int latestRoomId = 0;
         List<Room> getAllRoom = roomRepository.findAll();
         for(int i = 0 ; i < getAllRoom.size() ; i++){
-            int tempId = getAllRoom.get(i).getRoomId();
+            int id = getAllRoom.get(i).getRoomId();
+            int nextId = getAllRoom.get(i+1).getRoomId();
+            if((id+1) != nextId) { latestRoomId = id; }
         }
-        int latestRoomId = getAllRoom.get(getAllRoom.size()-1).getRoomId();
+        if(latestRoomId == 0) latestRoomId = getAllRoom.get(getAllRoom.size()-1).getRoomId();
         room.setRoomId(latestRoomId+1);
         System.out.println(room.toString());
         this.roomRepository.save(room);
