@@ -26,7 +26,7 @@ public class RoomController {
         int latestRoomId = 0;
         List<Room> getAllRoom = roomRepository.findAll();
         for(int i = 0 ; i < getAllRoom.size() ; i++){
-            if(i+1 == getAllRoom.size()) break;
+            if(i+1 == getAllRoom.size() - 1) break;
             int id = getAllRoom.get(i).getRoomId();
             int nextId = getAllRoom.get(i+1).getRoomId();
             if((id+1) != nextId) {
