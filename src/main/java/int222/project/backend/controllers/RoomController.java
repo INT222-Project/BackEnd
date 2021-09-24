@@ -21,9 +21,12 @@ public class RoomController {
     @GetMapping("")
     public List<Room> getAllRooms(){ return roomRepository.findAll(); }
 
-    @PostMapping(path = "/add")
-    public void addRoom(@RequestBody Room room){
+    @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void addRoom(@RequestPart("newRoom") Room room){
         List<Room> getAllRoom = roomRepository.findAll();
+        for(int i = 0 ; i < getAllRoom.size() ; i++){
+            int tempId = getAllRoom.get(i).getRoomId();
+        }
         int latestRoomId = getAllRoom.get(getAllRoom.size()-1).getRoomId();
         room.setRoomId(latestRoomId+1);
         System.out.println(room.toString());
