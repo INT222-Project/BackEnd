@@ -40,8 +40,8 @@ public class RoomController {
         this.roomRepository.save(room);
     }
 
-    @PutMapping(path = "/edit/{roomId}")
-    public void editRoom(@PathVariable int roomId , @RequestBody Room room){
+    @PutMapping(path = "/edit/{roomId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void editRoom(@PathVariable int roomId , @RequestPart("editRoom") Room room){
         Room temp = roomRepository.findById(roomId).orElse(null);
         if(temp != null){
             temp = room;
