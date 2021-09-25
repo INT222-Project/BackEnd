@@ -4,6 +4,7 @@ import int222.project.backend.models.Room;
 import int222.project.backend.repositories.RoomRepository;
 import int222.project.backend.services.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,10 @@ public class RoomController {
     @PostMapping("/uploadImage")
     public void uploadImage(@RequestParam("image-file") MultipartFile imageFile, int roomId){
         uploadService.saveImage(imageFile,roomId);
+    }
+    @GetMapping("/getImageSource/{roomId}")
+    public ResponseEntity<Resource> getImageSource(@PathVariable int roomId) {
+        return ResponseEntity.ok().body(uploadService.getImage(roomId));
     }
 
     @GetMapping(path = "/showImage/{roomId}")

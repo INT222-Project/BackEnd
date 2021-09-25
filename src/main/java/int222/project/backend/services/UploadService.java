@@ -2,6 +2,8 @@ package int222.project.backend.services;
 
 import int222.project.backend.exceptions.ExceptionResponse;
 import int222.project.backend.exceptions.ImageHandlerException;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 
 @Component
 public class UploadService {
@@ -52,6 +55,35 @@ public class UploadService {
         return data;
     }
 
+    public Resource getImage(int roomId){
+//        Image image = null;
+        Resource resource = null;
+        Path path = null;
+        try {
+            String folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/room-storage/";
+            File[] listOfFile = ResourceUtils.getFile(folder).listFiles();
+            if(listOfFile != null){
+                for(File temp : listOfFile){
+                    String extension = temp.getName().substring(temp.getName().lastIndexOf("."));
+//                    System.out.println("extension : " +extension);
+//                    System.out.println("product code + extension : " + productCode+extension);
+//                    System.out.println("temp.getName() : "  + temp.getName());
+                    if(temp.getName().equals(roomId+extension)){
+                        path = temp.toPath();
+                    }
+                }
+            }
+            System.out.println(path.getFileName());
+//            File file = ResourceUtils.getFile(folder + productCode + ".jpg");
+//            image = ImageIO.read(file);
+            resource = new UrlResource(path.toUri());
+        }
+        catch (IOException e){
+            System.out.println(e.getMessage());
+            System.out.println("Could not get Image file.");
+        }
+        return resource;
+    }
     public void deleteImage(int roomId){
         try{
             File file = getFile(roomId);
@@ -74,14 +106,14 @@ public class UploadService {
             for (File temp : listOfFile) {
                 String extension = temp.getName().substring(temp.getName().lastIndexOf("."));
 //                    System.out.println("extension : " +extension);
-//                    System.out.println("product code + extension : " + productCode+extension);
+//                    System.out.println("product code + extension : " + roomId +extension);
 //                    System.out.println("temp.getName() : "  + temp.getName());
                 if (temp.getName().equals(roomId + extension)) {
                     file = temp;
                 }
             }
         }
-        System.out.println(file.getName());
+//        System.out.println(file.getName());
         if(file == null) throw new ImageHandlerException("No such a file name "+ roomId, ExceptionResponse.ERROR_CODE.IMAGE_DOES_NOT_EXISTS);
         return file;
     }
