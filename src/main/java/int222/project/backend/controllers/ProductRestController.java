@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@CrossOrigin(origins = {""},allowedHeaders = "*")
+@CrossOrigin(origins = {"http://localhost:8081"},allowedHeaders = "*")
 @RestController
 public class ProductRestController {
     @Autowired
