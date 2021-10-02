@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name="room")
 public class Room {
     @Id
-    private String roomId;
+    private int roomId;
     private String roomNo;
     @ManyToOne
     @JoinColumn(name="roomtypeid")
@@ -17,7 +17,7 @@ public class Room {
     public Room() {
     }
 
-    public Room(String roomId, String roomNo, RoomType roomTypeId, double roomCharge, String bedType) {
+    public Room(int roomId, String roomNo, RoomType roomTypeId, double roomCharge, String bedType) {
         this.roomId = roomId;
         this.roomNo = roomNo;
         this.roomTypeId = roomTypeId;
@@ -25,11 +25,11 @@ public class Room {
         this.bedType = bedType;
     }
 
-    public String getRoomId() {
+    public int getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(String roomId) {
+    public void setRoomId(int roomId) {
         this.roomId = roomId;
     }
 
@@ -63,5 +63,16 @@ public class Room {
 
     public void setBedType(String bedType) {
         this.bedType = bedType;
+    }
+
+    @Override
+    public String toString() {
+        return "Room{" +
+                "roomId=" + roomId +
+                ", roomNo='" + roomNo + '\'' +
+                ", roomTypeId=" + roomTypeId +
+                ", roomCharge=" + roomCharge +
+                ", bedType='" + bedType + '\'' +
+                '}';
     }
 }
