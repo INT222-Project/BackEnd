@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:8081"}, allowedHeaders = "*")
+@CrossOrigin(origins = {"http://172.99.99.1:8080"}, allowedHeaders = "*")
 @RestController
 public class CentralRestController {
 
