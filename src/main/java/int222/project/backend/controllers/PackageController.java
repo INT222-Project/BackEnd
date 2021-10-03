@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:8081"}, allowedHeaders = "*")
+@CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/packages")
 public class PackageController {
