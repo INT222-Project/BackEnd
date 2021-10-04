@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
+@CrossOrigin(origins = {"http://52.163.87.230:8080"}, allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/receptionists")
 public class ReceptionistController {
