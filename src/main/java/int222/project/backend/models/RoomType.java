@@ -17,10 +17,12 @@ public class RoomType {
     public RoomType() {
     }
 
-    public RoomType(int roomTypeId, String name, String description) {
+    public RoomType(int roomTypeId, String name, String description, int maxRest, int roomSize) {
         this.roomTypeId = roomTypeId;
         this.name = name;
         this.description = description;
+        this.maxRest = maxRest;
+        this.roomSize = roomSize;
     }
 
     public int getRoomTypeId() {
