@@ -10,17 +10,17 @@ public class Room {
     private String roomNo;
     @ManyToOne
     @JoinColumn(name="roomtypeid")
-    private RoomType roomTypeId;
+    private RoomType roomType;
     private double roomCharge;
     private String bedType;
 
     public Room() {
     }
 
-    public Room(int roomId, String roomNo, RoomType roomTypeId, double roomCharge, String bedType) {
+    public Room(int roomId, String roomNo, RoomType roomType, double roomCharge, String bedType) {
         this.roomId = roomId;
         this.roomNo = roomNo;
-        this.roomTypeId = roomTypeId;
+        this.roomType = roomType;
         this.roomCharge = roomCharge;
         this.bedType = bedType;
     }
@@ -41,12 +41,12 @@ public class Room {
         this.roomNo = roomNo;
     }
 
-    public RoomType getRoomTypeId() {
-        return roomTypeId;
+    public RoomType getRoomType() {
+        return roomType;
     }
 
-    public void setRoomTypeId(RoomType roomTypeId) {
-        this.roomTypeId = roomTypeId;
+    public void setRoomType(RoomType roomType) {
+        this.roomType = roomType;
     }
 
     public double getRoomCharge() {
@@ -70,7 +70,7 @@ public class Room {
         return "Room{" +
                 "roomId=" + roomId +
                 ", roomNo='" + roomNo + '\'' +
-                ", roomTypeId=" + roomTypeId +
+                ", roomTypeId=" + roomType +
                 ", roomCharge=" + roomCharge +
                 ", bedType='" + bedType + '\'' +
                 '}';

@@ -11,6 +11,8 @@ public class RoomType {
     private int roomTypeId;
     private String name;
     private String description;
+    private int maxRest;
+    private int roomSize;
 
     public RoomType() {
     }
@@ -43,5 +45,21 @@ public class RoomType {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getMaxRest() {
+        return maxRest;
+    }
+
+    public void setMaxRest(int maxRest) {
+        this.maxRest = maxRest;
+    }
+
+    public int getRoomSize() {
+        return roomSize;
+    }
+
+    public void setRoomSize(int roomSize) {
+        this.roomSize = roomSize;
     }
 }
