@@ -12,12 +12,12 @@ public class RoomType {
     private String name;
     private String description;
     private int maxRest;
-    private int roomSize;
+    private String roomSize;
 
     public RoomType() {
     }
 
-    public RoomType(int roomTypeId, String name, String description, int maxRest, int roomSize) {
+    public RoomType(int roomTypeId, String name, String description, int maxRest, String roomSize) {
         this.roomTypeId = roomTypeId;
         this.name = name;
         this.description = description;
@@ -57,11 +57,11 @@ public class RoomType {
         this.maxRest = maxRest;
     }
 
-    public int getRoomSize() {
+    public String getRoomSize() {
         return roomSize;
     }
 
-    public void setRoomSize(int roomSize) {
+    public void setRoomSize(String roomSize) {
         this.roomSize = roomSize;
     }
 }
