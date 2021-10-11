@@ -35,9 +35,9 @@ public class RoomController {
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(roomId));
     }
 
-    @GetMapping("/roomRequirement")
-    public List<Room> getRoomRequireRoomType(){
-        return roomRepository.findAllRoomType();
+    @GetMapping("/roomRequirement/{roomTypeId}")
+    public List<Room> getRoomRequireRoomType(@PathVariable int roomTypeId){
+        return roomRepository.findAllRoomType(roomTypeId);
     }
     @GetMapping("/{roomId}")
     public Room getRoom (@PathVariable int roomId){ return roomRepository.findById(roomId).orElse(null); }
