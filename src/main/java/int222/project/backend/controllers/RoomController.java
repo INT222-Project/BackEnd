@@ -34,6 +34,11 @@ public class RoomController {
     public ResponseEntity<byte[]> showImage(@PathVariable int roomId){
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(roomId));
     }
+
+    @GetMapping("/roomRequirement")
+    public List<Room> getRoomRequireRoomType(){
+        return roomRepository.findAllRoomType();
+    }
     @GetMapping("/{roomId}")
     public Room getRoom (@PathVariable int roomId){ return roomRepository.findById(roomId).orElse(null); }
 

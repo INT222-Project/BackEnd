@@ -10,4 +10,7 @@ public interface RoomRepository extends JpaRepository<Room,Integer> {
     @Override
     @Query("select r from Room r order by r.roomNo")
     List<Room> findAll();
+
+    @Query("select r from Room r group by r.roomType , r.bedType,r.roomCharge order by  r.roomType.roomTypeId")
+    List<Room> findAllRoomType();
 }
