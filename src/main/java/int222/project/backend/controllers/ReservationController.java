@@ -24,6 +24,11 @@ public class ReservationController {
         return reservationRepository.findAll();
     }
 
+    @GetMapping("/unsuccessReservation")
+    public List<Reservation> getUnsuccesReservation(){
+        return reservationRepository.getUnsuccessReservation();
+    }
+
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addReservation(@RequestPart("newReservation") Reservation reservation){
         String latestReservation = null;
