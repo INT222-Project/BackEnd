@@ -3,6 +3,7 @@ package int222.project.backend.controllers;
 import int222.project.backend.models.Reservation;
 import int222.project.backend.repositories.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,5 +22,25 @@ public class ReservationController {
     @GetMapping("")
     public List<Reservation> getAllReservations(){
         return reservationRepository.findAll();
+    }
+
+    @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void addReservation(@RequestPart("newReservation") Reservation reservation){
+        String latestReservation = null;
+        List<Reservation> getAllReservation = reservationRepository.findAll();
+        for(int i = 0 ; i < getAllReservation.size() ; i++){
+            if(i+1 == getAllReservation.size() - 1) break;
+            String id = getAllReservation.get(i).getReservNo();
+            String nextId = getAllReservation.get(i+1).getReservNo();
+            if(!(id+1).equals(nextId)) {
+                latestReservation = id;
+                break;
+            }
+        }
+        if(latestReservation == null) latestReservation = getAllReservation.get(getAllReservation.size()-1).getReservNo();
+        int id = Integer.parseInt(latestReservation)+1;
+        reservation.setReservNo(Integer.toString(id));
+        System.out.println(reservation.toString());
+        this.reservationRepository.save(reservation);
     }
 }
