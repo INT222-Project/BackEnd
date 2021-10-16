@@ -32,11 +32,12 @@ public class ReservationController {
             if(i+1 == getAllReservation.size() - 1) break;
             String id = getAllReservation.get(i).getReservNo();
             String nextId = getAllReservation.get(i+1).getReservNo();
-            if(!(id+1).equals(nextId)) {
+            if(!(Integer.toString(Integer.parseInt(id)+1)).equals(nextId)) {
                 latestReservation = id;
                 break;
             }
         }
+        System.out.println("latest Reservation no : " + latestReservation);
         if(latestReservation == null) latestReservation = getAllReservation.get(getAllReservation.size()-1).getReservNo();
         int id = Integer.parseInt(latestReservation)+1;
         reservation.setReservNo(Integer.toString(id));
