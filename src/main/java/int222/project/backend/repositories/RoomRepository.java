@@ -13,4 +13,7 @@ public interface RoomRepository extends JpaRepository<Room,Integer> {
 
     @Query("select r from Room r where r.roomType.roomTypeId = ?1 group by r.bedType")
     List<Room> findAllRoomType(int roomTypeId);
+
+    @Query("select r from Room r where r.roomType.roomTypeId = ?1")
+    List<Room> findRoomsByRoomTypeId(int roomTypeId);
 }

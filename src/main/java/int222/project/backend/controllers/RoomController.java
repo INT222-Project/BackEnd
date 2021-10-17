@@ -45,6 +45,9 @@ public class RoomController {
     @GetMapping("")
     public List<Room> getAllRooms(){ return roomRepository.findAll(); }
 
+    @GetMapping("/roomType/{roomTypeId}")
+    public List<Room> getRoomByRoomType(@PathVariable int roomTypeId){return roomRepository.findRoomsByRoomTypeId(roomTypeId);}
+
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addRoom(@RequestPart("newRoom") Room room,@RequestParam("image-file") MultipartFile file){
         int latestRoomId = 0;
