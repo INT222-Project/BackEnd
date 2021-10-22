@@ -41,6 +41,8 @@ public class ReservationController {
 
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addReservation(@RequestPart("newReservation") ReservationRequirement reservationRequirement){
+        // to string reservation requirement object
+        System.out.println("Reservation requirement object : " + reservationRequirement.toString());
         int nextId = this.getNextReservationNo();
         Reservation tempReservation = new Reservation(Integer.toString(nextId),reservationRequirement.getCustomer(),reservationRequirement.getPaymentDate(),reservationRequirement.getReservationDate(),reservationRequirement.getPaymentMethod(),reservationRequirement.getSubtotal(),null,null);
         System.out.println(tempReservation.toString());

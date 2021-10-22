@@ -111,4 +111,20 @@ public class ReservationRequirement {
     public void setPackages(List<Package> packages) {
         this.packages = packages;
     }
+
+    @Override
+    public String toString() {
+        return "ReservationRequirement{" +
+                "customer=" + customer +
+                ", paymentDate=" + paymentDate +
+                ", reservationDate=" + reservationDate +
+                ", paymentMethod=" + paymentMethod +
+                ", subtotal=" + subtotal +
+                ", checkInDate=" + checkInDate +
+                ", checkOutDate=" + checkOutDate +
+                ", numOfRest=" + numOfRest +
+                ", roomCharge=" + roomCharge +
+                ", packages=" + packages +
+                '}';
+    }
 }
