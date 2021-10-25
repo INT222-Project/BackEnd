@@ -28,6 +28,7 @@ public class ReservationDetail {
     private Date checkOutDate;
     private int numOfRest;
     private double total;
+    private String status;
     @JsonManagedReference
     @OneToMany(mappedBy = "reservDetailId",cascade = CascadeType.ALL,targetEntity = PackageDetail.class)
     @MapsId("reservDetailId")
@@ -36,7 +37,7 @@ public class ReservationDetail {
     public ReservationDetail() {
     }
 
-    public ReservationDetail(String reservDetailId, Reservation reservNo, Room room, Date checkInDate, Date checkOutDate, int numOfRest, double total) {
+    public ReservationDetail(String reservDetailId, Reservation reservNo, Room room, Date checkInDate, Date checkOutDate, int numOfRest, double total, String status, List<PackageDetail> packageDetailList) {
         this.reservDetailId = reservDetailId;
         this.reservNo = reservNo;
         this.room = room;
@@ -44,6 +45,8 @@ public class ReservationDetail {
         this.checkOutDate = checkOutDate;
         this.numOfRest = numOfRest;
         this.total = total;
+        this.status = status;
+        this.packageDetailList = packageDetailList;
     }
 
     public String getReservDetailId() {
@@ -100,5 +103,36 @@ public class ReservationDetail {
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<PackageDetail> getPackageDetailList() {
+        return packageDetailList;
+    }
+
+    public void setPackageDetailList(List<PackageDetail> packageDetailList) {
+        this.packageDetailList = packageDetailList;
+    }
+
+    @Override
+    public String toString() {
+        return "ReservationDetail{" +
+                "reservDetailId='" + reservDetailId + '\'' +
+                ", reservNo=" + reservNo +
+                ", room=" + room +
+                ", checkInDate=" + checkInDate +
+                ", checkOutDate=" + checkOutDate +
+                ", numOfRest=" + numOfRest +
+                ", total=" + total +
+                ", status='" + status + '\'' +
+                ", packageDetailList=" + packageDetailList +
+                '}';
     }
 }

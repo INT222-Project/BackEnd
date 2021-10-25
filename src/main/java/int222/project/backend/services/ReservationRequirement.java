@@ -3,6 +3,7 @@ package int222.project.backend.services;
 import int222.project.backend.models.Customer;
 import int222.project.backend.models.Package;
 import int222.project.backend.models.PaymentMethod;
+import int222.project.backend.models.Room;
 
 import java.util.Date;
 import java.util.List;
@@ -16,10 +17,10 @@ public class ReservationRequirement {
     private Date checkInDate;
     private Date checkOutDate;
     private int numOfRest;
-    private double roomCharge;
+    private Room room;
     private List<Package> packages;
 
-    public ReservationRequirement(Customer customer, Date paymentDate, Date reservationDate, PaymentMethod paymentMethod, double subtotal, Date checkInDate, Date checkOutDate, int numOfRest, double roomCharge, List<Package> packages) {
+    public ReservationRequirement(Customer customer, Date paymentDate, Date reservationDate, PaymentMethod paymentMethod, double subtotal, Date checkInDate, Date checkOutDate, int numOfRest, Room room, List<Package> packages) {
         this.customer = customer;
         this.paymentDate = paymentDate;
         this.reservationDate = reservationDate;
@@ -28,7 +29,7 @@ public class ReservationRequirement {
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.numOfRest = numOfRest;
-        this.roomCharge = roomCharge;
+        this.room = room;
         this.packages = packages;
     }
 
@@ -96,12 +97,12 @@ public class ReservationRequirement {
         this.numOfRest = numOfRest;
     }
 
-    public double getRoomCharge() {
-        return roomCharge;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setRoomCharge(double roomCharge) {
-        this.roomCharge = roomCharge;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     public List<Package> getPackages() {
@@ -123,7 +124,7 @@ public class ReservationRequirement {
                 ", checkInDate=" + checkInDate +
                 ", checkOutDate=" + checkOutDate +
                 ", numOfRest=" + numOfRest +
-                ", roomCharge=" + roomCharge +
+                ", room=" + room +
                 ", packages=" + packages +
                 '}';
     }
