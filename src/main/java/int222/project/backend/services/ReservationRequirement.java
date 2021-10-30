@@ -12,7 +12,6 @@ public class ReservationRequirement {
     private Customer customer;
     private Date paymentDate;
     private Date reservationDate;
-    private PaymentMethod paymentMethod;
     private double subtotal;
     private Date checkInDate;
     private Date checkOutDate;
@@ -20,11 +19,10 @@ public class ReservationRequirement {
     private Room room;
     private List<Package> packages;
 
-    public ReservationRequirement(Customer customer, Date paymentDate, Date reservationDate, PaymentMethod paymentMethod, double subtotal, Date checkInDate, Date checkOutDate, int numOfRest, Room room, List<Package> packages) {
+    public ReservationRequirement(Customer customer, Date paymentDate, Date reservationDate, double subtotal, Date checkInDate, Date checkOutDate, int numOfRest, Room room, List<Package> packages) {
         this.customer = customer;
         this.paymentDate = paymentDate;
         this.reservationDate = reservationDate;
-        this.paymentMethod = paymentMethod;
         this.subtotal = subtotal;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
@@ -55,14 +53,6 @@ public class ReservationRequirement {
 
     public void setReservationDate(Date reservationDate) {
         this.reservationDate = reservationDate;
-    }
-
-    public PaymentMethod getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
     }
 
     public double getSubtotal() {
@@ -119,7 +109,6 @@ public class ReservationRequirement {
                 "customer=" + customer +
                 ", paymentDate=" + paymentDate +
                 ", reservationDate=" + reservationDate +
-                ", paymentMethod=" + paymentMethod +
                 ", subtotal=" + subtotal +
                 ", checkInDate=" + checkInDate +
                 ", checkOutDate=" + checkOutDate +

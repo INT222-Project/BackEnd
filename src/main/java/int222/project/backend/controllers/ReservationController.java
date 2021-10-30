@@ -1,12 +1,11 @@
 package int222.project.backend.controllers;
 
+import int222.project.backend.models.*;
 import int222.project.backend.models.Package;
-import int222.project.backend.models.PackageDetail;
-import int222.project.backend.models.Reservation;
-import int222.project.backend.models.ReservationDetail;
 import int222.project.backend.repositories.PackageDetailRepository;
 import int222.project.backend.repositories.ReservationDetailRepository;
 import int222.project.backend.repositories.ReservationRepository;
+import int222.project.backend.services.ReservationAddingObject;
 import int222.project.backend.services.ReservationRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -41,34 +40,38 @@ public class ReservationController {
     }
 
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void addReservation(@RequestPart("newReservation") ReservationRequirement reservationRequirement){
-        // to string reservation requirement object
-        System.out.println("Reservation requirement object : " + reservationRequirement.toString());
-        String reservationNo = this.getNextReservationNo();
-        Reservation tempReservation = new Reservation(reservationNo,reservationRequirement.getCustomer(),reservationRequirement.getPaymentDate(),reservationRequirement.getReservationDate(),reservationRequirement.getPaymentMethod(),reservationRequirement.getSubtotal(),null,null);
-        System.out.println(tempReservation.toString());
-        this.reservationRepository.save(tempReservation);
-        // add reservation detail from reservation
-        String reservationDetailId = getReservationDetailId();
-        ReservationDetail tempReservationDetail = new ReservationDetail(reservationDetailId,tempReservation,reservationRequirement.getRoom(),reservationRequirement.getCheckInDate(),reservationRequirement.getCheckOutDate(),reservationRequirement.getNumOfRest(),reservationRequirement.getRoom().getRoomCharge(),"undone",null);
-        this.reservationDetailRepository.save(tempReservationDetail);
-        // add package detail from reservation detail
-        List<Package> packages = reservationRequirement.getPackages();
-        for(int i = 0 ; i < packages.size() ; i++){
-            String packageDetailId = getPackageDetailId();
-            PackageDetail tempPackageDetail = new PackageDetail(packageDetailId,tempReservationDetail,packages.get(i),packages.get(i).getPackageCharge());
-            this.packageDetailRepository.save(tempPackageDetail);
+    public void addReservation(@RequestPart("newReservation") ReservationAddingObject reservationAddingObject){
+        List<ReservationRequirement> reservationRequirementList = reservationAddingObject.getReservationRequirements();
+        PaymentMethod paymentMethod = reservationAddingObject.getPaymentMethod();
+        for(ReservationRequirement reservationRequirement : reservationRequirementList) {
+            // to string reservation requirement object
+            System.out.println("Reservation requirement object : " + reservationRequirement.toString());
+            String reservationNo = this.getNextReservationNo();
+            Reservation tempReservation = new Reservation(reservationNo, reservationRequirement.getCustomer(), reservationRequirement.getPaymentDate(), reservationRequirement.getReservationDate(), paymentMethod, reservationRequirement.getSubtotal(), null, null);
+            System.out.println(tempReservation.toString());
+            this.reservationRepository.save(tempReservation);
+            // add reservation detail from reservation
+            String reservationDetailId = getReservationDetailId();
+            ReservationDetail tempReservationDetail = new ReservationDetail(reservationDetailId, tempReservation, reservationRequirement.getRoom(), reservationRequirement.getCheckInDate(), reservationRequirement.getCheckOutDate(), reservationRequirement.getNumOfRest(), reservationRequirement.getRoom().getRoomCharge(), "undone", null);
+            this.reservationDetailRepository.save(tempReservationDetail);
+            // add package detail from reservation detail
+            List<Package> packages = reservationRequirement.getPackages();
+            for (int i = 0; i < packages.size(); i++) {
+                String packageDetailId = getPackageDetailId();
+                PackageDetail tempPackageDetail = new PackageDetail(packageDetailId, tempReservationDetail, packages.get(i), packages.get(i).getPackageCharge());
+                this.packageDetailRepository.save(tempPackageDetail);
+            }
+            // add list to reservation
+            Reservation reservation = this.reservationRepository.findById(reservationNo).orElse(null);
+            List<ReservationDetail> reservationDetailList = this.reservationDetailRepository.getAllReservationDetailsByReservNo(reservation.getReservNo());
+            for (ReservationDetail temp : reservationDetailList) {
+                List<PackageDetail> packageDetailList = this.packageDetailRepository.getAllPackageDetailsByReservationDetail(temp.getReservDetailId());
+                temp.setPackageDetailList(packageDetailList);
+                this.reservationDetailRepository.saveAndFlush(temp);
+            }
+            reservation.setReservationDetailList(reservationDetailList);
+            this.reservationRepository.saveAndFlush(reservation);
         }
-        // add list to reservation
-        Reservation reservation = this.reservationRepository.findById(reservationNo).orElse(null);
-        List<ReservationDetail> reservationDetailList = this.reservationDetailRepository.getAllReservationDetailsByReservNo(reservation.getReservNo());
-        for(ReservationDetail temp : reservationDetailList){
-            List<PackageDetail> packageDetailList = this.packageDetailRepository.getAllPackageDetailsByReservationDetail(temp.getReservDetailId());
-            temp.setPackageDetailList(packageDetailList);
-            this.reservationDetailRepository.saveAndFlush(temp);
-        }
-        reservation.setReservationDetailList(reservationDetailList);
-        this.reservationRepository.saveAndFlush(reservation);
     }
 
     @PutMapping(path = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
