@@ -39,6 +39,11 @@ public class ReservationController {
         return reservationRepository.getUnsuccessReservation();
     }
 
+    @GetMapping("/byCustomerId/{customerId}")
+    public List<Reservation> getReservationByCustomerId(@PathVariable String customerId){
+        return reservationRepository.getReservationByCustomerId(customerId);
+    }
+
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addReservation(@RequestPart("newReservation") ReservationAddingObject reservationAddingObject){
         List<ReservationRequirement> reservationRequirementList = reservationAddingObject.getReservationRequirements();
