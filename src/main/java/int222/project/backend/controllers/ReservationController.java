@@ -48,10 +48,11 @@ public class ReservationController {
     public void addReservation(@RequestPart("newReservation") ReservationAddingObject reservationAddingObject){
         List<ReservationRequirement> reservationRequirementList = reservationAddingObject.getReservationRequirements();
         PaymentMethod paymentMethod = reservationAddingObject.getPaymentMethod();
+        // generate reservation no
+        String reservationNo = this.getNextReservationNo();
         for(ReservationRequirement reservationRequirement : reservationRequirementList) {
             // to string reservation requirement object
             System.out.println("Reservation requirement object : " + reservationRequirement.toString());
-            String reservationNo = this.getNextReservationNo();
             Reservation tempReservation = new Reservation(reservationNo, reservationRequirement.getCustomer(), reservationRequirement.getPaymentDate(), reservationRequirement.getReservationDate(), paymentMethod, reservationRequirement.getSubtotal(), null, null);
             System.out.println(tempReservation.toString());
             this.reservationRepository.save(tempReservation);
