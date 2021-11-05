@@ -43,6 +43,10 @@ public class ReservationController {
     public List<Reservation> getReservationByCustomerId(@PathVariable String customerId){
         return reservationRepository.getReservationByCustomerId(customerId);
     }
+    @GetMapping("/byReservationDetailId/{reservDetailId}")
+    public Reservation getReservationByReservationDetailId(@PathVariable String reservDetailId){
+        return reservationRepository.getReservationByReservationDetailId(reservDetailId);
+    }
 
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addReservation(@RequestPart("newReservation") ReservationAddingObject reservationAddingObject){
@@ -53,7 +57,7 @@ public class ReservationController {
         for(ReservationRequirement reservationRequirement : reservationRequirementList) {
             // to string reservation requirement object
             System.out.println("Reservation requirement object : " + reservationRequirement.toString());
-            Reservation tempReservation = new Reservation(reservationNo, reservationRequirement.getCustomer(), reservationRequirement.getPaymentDate(), reservationRequirement.getReservationDate(), paymentMethod, reservationRequirement.getSubtotal(), null, null);
+            Reservation tempReservation = new Reservation(reservationNo, reservationRequirement.getCustomer(), reservationRequirement.getPaymentDate(), reservationRequirement.getReservationDate(), paymentMethod, reservationRequirement.getSubtotal(),"undone", null, null);
             System.out.println(tempReservation.toString());
             this.reservationRepository.save(tempReservation);
             // add reservation detail from reservation
