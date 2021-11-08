@@ -1,10 +1,12 @@
 package int222.project.backend.controllers;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import int222.project.backend.models.*;
 import int222.project.backend.models.Package;
 import int222.project.backend.repositories.PackageDetailRepository;
 import int222.project.backend.repositories.ReservationDetailRepository;
 import int222.project.backend.repositories.ReservationRepository;
+import int222.project.backend.repositories.RoomRepository;
 import int222.project.backend.services.ReservationAddingObject;
 import int222.project.backend.services.ReservationRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ public class ReservationController {
     ReservationDetailRepository reservationDetailRepository;
     @Autowired
     PackageDetailRepository packageDetailRepository;
+    @Autowired
+    RoomRepository roomRepository;
 
     // Reservation
     @GetMapping("/{reservNo}")
@@ -86,7 +90,13 @@ public class ReservationController {
 
     @PutMapping(path = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void editReservation(@RequestPart("editReservation") Reservation reservation){
-        this.reservationRepository.save(reservation);
+        List<ReservationDetail> reservationDetail = reservation.getReservationDetailList();
+        for(ReservationDetail temp : reservationDetail){
+            if(temp.getRoom().getStatus().equals("Unavailable")){
+                this.roomRepository.saveAndFlush(temp.getRoom());
+            }
+        }
+        this.reservationRepository.saveAndFlush(reservation);
     }
 
     private String getNextReservationNo(){

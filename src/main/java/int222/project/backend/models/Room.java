@@ -13,16 +13,19 @@ public class Room {
     private RoomType roomType;
     private double roomCharge;
     private String bedType;
+    @Column(name="status")
+    private String status;
 
     public Room() {
     }
 
-    public Room(int roomId, String roomNo, RoomType roomType, double roomCharge, String bedType) {
+    public Room(int roomId, String roomNo, RoomType roomType, double roomCharge, String bedType, String status) {
         this.roomId = roomId;
         this.roomNo = roomNo;
         this.roomType = roomType;
         this.roomCharge = roomCharge;
         this.bedType = bedType;
+        this.status = status;
     }
 
     public int getRoomId() {
@@ -65,14 +68,23 @@ public class Room {
         this.bedType = bedType;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "Room{" +
                 "roomId=" + roomId +
                 ", roomNo='" + roomNo + '\'' +
-                ", roomTypeId=" + roomType +
+                ", roomType=" + roomType +
                 ", roomCharge=" + roomCharge +
                 ", bedType='" + bedType + '\'' +
+                ", status='" + status + '\'' +
                 '}';
     }
 }
