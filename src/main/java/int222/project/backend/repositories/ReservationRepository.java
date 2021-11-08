@@ -19,6 +19,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, String
     @Query("select rs from Reservation rs where rs.status='unpaid'")
     List<Reservation> getUnpaidReservation();
 
-    @Query("select rs from Reservation rs join ReservationDetail rd on rs.reservNo = rd.reservNo where rs.status='paid' and rd.status = 'reserved'")
+    @Query("select rs from Reservation rs where rs.status='paid'")
     List<Reservation> getSuccessReservation();
 }
