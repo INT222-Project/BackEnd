@@ -51,7 +51,10 @@ public class ReservationController {
     public Reservation getReservationByReservationDetailId(@PathVariable String reservDetailId){
         return reservationRepository.getReservationByReservationDetailId(reservDetailId);
     }
-
+    @GetMapping("/unpaidReservation")
+    public List<Reservation> getUnpaidReservation(){
+        return reservationRepository.getUnpaidReservation();
+    }
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addReservation(@RequestPart("newReservation") ReservationAddingObject reservationAddingObject){
         List<ReservationRequirement> reservationRequirementList = reservationAddingObject.getReservationRequirements();
