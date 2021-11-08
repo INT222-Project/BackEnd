@@ -55,6 +55,10 @@ public class ReservationController {
     public List<Reservation> getUnpaidReservation(){
         return reservationRepository.getUnpaidReservation();
     }
+
+    @GetMapping("/successReservation")
+    public List<Reservation> getSuccessReservation(){ return reservationRepository.getSuccessReservation();}
+
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addReservation(@RequestPart("newReservation") ReservationAddingObject reservationAddingObject){
         List<ReservationRequirement> reservationRequirementList = reservationAddingObject.getReservationRequirements();

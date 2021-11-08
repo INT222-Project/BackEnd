@@ -34,4 +34,8 @@ public class ReservationDetailController {
         return reservationDetailRepository.getAllReservationDetailsByReservNo(reservation.getReservNo());
     }
 
+    @GetMapping("/reservedReservationDetail")
+    public List<ReservationDetail> getReservedReservationDetail(){ return reservationDetailRepository.getReservedReservationDetail();}
+
+
 }
