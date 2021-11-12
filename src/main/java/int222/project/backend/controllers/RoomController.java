@@ -2,20 +2,36 @@ package int222.project.backend.controllers;
 
 import int222.project.backend.models.Room;
 import int222.project.backend.repositories.RoomRepository;
+import int222.project.backend.services.RemainingRoomObject;
 import int222.project.backend.services.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
+
+    @Value("${spring.datasource.url}")
+    String url;
+    @Value("${jdbc.driver.name}")
+    String driverName;
+    @Value("${spring.datasource.username}")
+    String username;
+    @Value("${spring.datasource.password}")
+    String password;
     @Autowired
     RoomRepository roomRepository;
     @Autowired
@@ -39,6 +55,34 @@ public class RoomController {
     public List<Room> getRoomRequireRoomType(@PathVariable int roomTypeId){
         return roomRepository.findAllRoomType(roomTypeId);
     }
+
+    @GetMapping("/getRemainingRoom")
+    public List<RemainingRoomObject> getRemainingRoom(){
+        List<RemainingRoomObject> remainingRoomObjects = new ArrayList<>();
+        try{
+            Class.forName(driverName);
+            Connection connection = DriverManager.getConnection(this.url,this.username,this.password);
+            String query = "select roomtypeid,bedtype, count(bedtype) from room where status != 'mock-up' and status != 'unavailable' group by roomtypeid, bedtype;";
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+            while (rs.next())
+            {
+                int roomtypeid = rs.getInt("roomtypeid");
+                String bedtype = rs.getString("bedtype");
+                int count = rs.getInt("count(bedtype)");
+                System.out.printf("%s, %s, %s \n", roomtypeid,bedtype,count);
+                RemainingRoomObject temp = new RemainingRoomObject(roomtypeid,bedtype,count);
+                remainingRoomObjects.add(temp);
+            }
+            statement.close();
+        }
+        catch (Exception e){
+            System.err.println("Got an exception !");
+            System.err.println(e.getMessage());
+        }
+        return remainingRoomObjects;
+    }
+
     @GetMapping("/{roomId}")
     public Room getRoom (@PathVariable int roomId){ return roomRepository.findById(roomId).orElse(null); }
 

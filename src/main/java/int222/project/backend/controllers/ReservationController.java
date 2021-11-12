@@ -1,19 +1,17 @@
 package int222.project.backend.controllers;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import int222.project.backend.models.*;
 import int222.project.backend.models.Package;
 import int222.project.backend.repositories.PackageDetailRepository;
 import int222.project.backend.repositories.ReservationDetailRepository;
 import int222.project.backend.repositories.ReservationRepository;
 import int222.project.backend.repositories.RoomRepository;
-import int222.project.backend.services.ReservationAddingObject;
-import int222.project.backend.services.ReservationRequirement;
+import int222.project.backend.models.ReservationAddingObject;
+import int222.project.backend.models.ReservationRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")

@@ -1,6 +1,4 @@
-package int222.project.backend.services;
-
-import int222.project.backend.models.PaymentMethod;
+package int222.project.backend.models;
 
 import java.util.List;
 
