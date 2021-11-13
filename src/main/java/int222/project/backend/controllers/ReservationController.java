@@ -60,13 +60,17 @@ public class ReservationController {
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addReservation(@RequestPart("newReservation") ReservationAddingObject reservationAddingObject){
         List<ReservationRequirement> reservationRequirementList = reservationAddingObject.getReservationRequirements();
+        double price = 0;
+        for(int i = 0 ; i < reservationRequirementList.size() ; i++){
+            price += reservationRequirementList.get(i).getSubtotal();
+        }
         PaymentMethod paymentMethod = reservationAddingObject.getPaymentMethod();
         // generate reservation no
         String reservationNo = this.getNextReservationNo();
         for(ReservationRequirement reservationRequirement : reservationRequirementList) {
             // to string reservation requirement object
             System.out.println("Reservation requirement object : " + reservationRequirement.toString());
-            Reservation tempReservation = new Reservation(reservationNo, reservationRequirement.getCustomer(), reservationRequirement.getPaymentDate(), reservationRequirement.getReservationDate(), paymentMethod, reservationRequirement.getSubtotal(),"undone", null, null);
+            Reservation tempReservation = new Reservation(reservationNo, reservationRequirement.getCustomer(), reservationRequirement.getPaymentDate(), reservationRequirement.getReservationDate(), paymentMethod, price,"unpaid", null, null);
             System.out.println(tempReservation.toString());
             this.reservationRepository.save(tempReservation);
             // add reservation detail from reservation

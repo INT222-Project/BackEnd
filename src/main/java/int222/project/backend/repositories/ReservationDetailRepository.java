@@ -12,6 +12,6 @@ public interface ReservationDetailRepository extends JpaRepository <ReservationD
     @Query("select rd from ReservationDetail rd inner join Reservation r on  rd.reservNo = r.reservNo where r.reservNo = ?1")
     List<ReservationDetail> getAllReservationDetailsByReservNo(String reservNo);
 
-    @Query("select rd from ReservationDetail rd where rd.status = 'reserved'")
+    @Query("select rd from ReservationDetail rd where rd.status = 'check-in'")
     List<ReservationDetail> getReservedReservationDetail();
 }
