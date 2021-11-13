@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, String> {
-    @Query("select rs from Reservation rs order by rs.status desc")
+    @Query("select rs from Reservation rs where rs.status='paid' order by rs.status desc")
     List<Reservation> getUnsuccessReservation();
 
     @Query("select rs from Reservation rs inner join ReservationDetail rd on rs.reservNo = rd.reservNo where rd.reservDetailId = ?1")

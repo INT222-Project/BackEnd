@@ -95,12 +95,6 @@ public class ReservationController {
 
     @PutMapping(path = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void editReservation(@RequestPart("editReservation") Reservation reservation){
-        List<ReservationDetail> reservationDetail = reservation.getReservationDetailList();
-        for(ReservationDetail temp : reservationDetail){
-            if(temp.getRoom().getStatus().equals("Unavailable")){
-                this.roomRepository.saveAndFlush(temp.getRoom());
-            }
-        }
         this.reservationRepository.saveAndFlush(reservation);
     }
 
