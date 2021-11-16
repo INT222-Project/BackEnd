@@ -25,6 +25,8 @@ public class Reservation {
     @JoinColumn(name = "paymentmethodid")
     private PaymentMethod paymentMethodId;
     private double subTotal;
+    @JoinColumn(name="status")
+    private String status;
     @ManyToOne
     @JoinColumn(name = "repid")
     private Receptionist repId;
@@ -36,13 +38,14 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(String reservNo, Customer customerId, Date paymentDate, Date reservationDate, PaymentMethod paymentMethodId, double subTotal, Receptionist repId, List<ReservationDetail> reservationDetailList) {
+    public Reservation(String reservNo, Customer customerId, Date paymentDate, Date reservationDate, PaymentMethod paymentMethodId, double subTotal, String status, Receptionist repId, List<ReservationDetail> reservationDetailList) {
         this.reservNo = reservNo;
         this.customerId = customerId;
         this.paymentDate = paymentDate;
         this.reservationDate = reservationDate;
         this.paymentMethodId = paymentMethodId;
         this.subTotal = subTotal;
+        this.status = status;
         this.repId = repId;
         this.reservationDetailList = reservationDetailList;
     }
@@ -93,6 +96,14 @@ public class Reservation {
 
     public void setSubTotal(double subTotal) {
         this.subTotal = subTotal;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Receptionist getRepId() {

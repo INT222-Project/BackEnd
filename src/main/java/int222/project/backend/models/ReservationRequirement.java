@@ -1,4 +1,4 @@
-package int222.project.backend.services;
+package int222.project.backend.models;
 
 import int222.project.backend.models.Customer;
 import int222.project.backend.models.Package;

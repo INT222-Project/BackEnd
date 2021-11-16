@@ -5,13 +5,13 @@ import int222.project.backend.models.Package;
 import int222.project.backend.repositories.PackageDetailRepository;
 import int222.project.backend.repositories.ReservationDetailRepository;
 import int222.project.backend.repositories.ReservationRepository;
-import int222.project.backend.services.ReservationAddingObject;
-import int222.project.backend.services.ReservationRequirement;
+import int222.project.backend.repositories.RoomRepository;
+import int222.project.backend.models.ReservationAddingObject;
+import int222.project.backend.models.ReservationRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
@@ -24,6 +24,8 @@ public class ReservationController {
     ReservationDetailRepository reservationDetailRepository;
     @Autowired
     PackageDetailRepository packageDetailRepository;
+    @Autowired
+    RoomRepository roomRepository;
 
     // Reservation
     @GetMapping("/{reservNo}")
@@ -39,15 +41,36 @@ public class ReservationController {
         return reservationRepository.getUnsuccessReservation();
     }
 
+    @GetMapping("/byCustomerId/{customerId}")
+    public List<Reservation> getReservationByCustomerId(@PathVariable String customerId){
+        return reservationRepository.getReservationByCustomerId(customerId);
+    }
+    @GetMapping("/byReservationDetailId/{reservDetailId}")
+    public Reservation getReservationByReservationDetailId(@PathVariable String reservDetailId){
+        return reservationRepository.getReservationByReservationDetailId(reservDetailId);
+    }
+    @GetMapping("/unpaidReservation")
+    public List<Reservation> getUnpaidReservation(){
+        return reservationRepository.getUnpaidReservation();
+    }
+
+    @GetMapping("/successReservation")
+    public List<Reservation> getSuccessReservation(){ return reservationRepository.getSuccessReservation();}
+
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addReservation(@RequestPart("newReservation") ReservationAddingObject reservationAddingObject){
         List<ReservationRequirement> reservationRequirementList = reservationAddingObject.getReservationRequirements();
+        double price = 0;
+        for(int i = 0 ; i < reservationRequirementList.size() ; i++){
+            price += reservationRequirementList.get(i).getSubtotal();
+        }
         PaymentMethod paymentMethod = reservationAddingObject.getPaymentMethod();
+        // generate reservation no
+        String reservationNo = this.getNextReservationNo();
         for(ReservationRequirement reservationRequirement : reservationRequirementList) {
             // to string reservation requirement object
             System.out.println("Reservation requirement object : " + reservationRequirement.toString());
-            String reservationNo = this.getNextReservationNo();
-            Reservation tempReservation = new Reservation(reservationNo, reservationRequirement.getCustomer(), reservationRequirement.getPaymentDate(), reservationRequirement.getReservationDate(), paymentMethod, reservationRequirement.getSubtotal(), null, null);
+            Reservation tempReservation = new Reservation(reservationNo, reservationRequirement.getCustomer(), reservationRequirement.getPaymentDate(), reservationRequirement.getReservationDate(), paymentMethod, price,"unpaid", null, null);
             System.out.println(tempReservation.toString());
             this.reservationRepository.save(tempReservation);
             // add reservation detail from reservation
@@ -76,7 +99,7 @@ public class ReservationController {
 
     @PutMapping(path = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void editReservation(@RequestPart("editReservation") Reservation reservation){
-        this.reservationRepository.save(reservation);
+        this.reservationRepository.saveAndFlush(reservation);
     }
 
     private String getNextReservationNo(){
