@@ -1,8 +1,7 @@
 package int222.project.backend.controllers;
 
 import int222.project.backend.config.JwtTokenUtil;
-import int222.project.backend.models.JwtRequest;
-import int222.project.backend.models.JwtResponse;
+import int222.project.backend.models.*;
 import int222.project.backend.repositories.CustomerRepository;
 import int222.project.backend.repositories.ReceptionistRepository;
 import int222.project.backend.services.JwtUserDetailService;
@@ -12,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
@@ -30,13 +30,30 @@ public class JwtAuthenticationController {
     @Autowired
     JwtUserDetailService jwtUserDetailService;
 
+    @Autowired
+    CustomerRepository customerRepository;
+
+    @Autowired
+    ReceptionistRepository receptionistRepository;
+
     @PostMapping(value = "/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-        final UserDetails userDetails = jwtUserDetailService
+        final AuthenticationUser authenticationUser = jwtUserDetailService
                 .loadUserByUsername(authenticationRequest.getUsername());
-        final String token = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        final String token = jwtTokenUtil.generateToken(authenticationUser);
+        System.out.println("username : " + authenticationUser.getUsername() + "password : " + authenticationUser.getPassword());
+        Customer customer = customerRepository.findCustomerByEmail(authenticationUser.getUsername()).orElse(null);
+        Receptionist receptionist = receptionistRepository.findReceptionistByEmail(authenticationUser.getUsername()).orElse(null);
+        if(customer != null){
+            return ResponseEntity.ok(new JwtResponse<Customer>(token, customer));
+        }
+        else if(receptionist != null){
+            return ResponseEntity.ok(new JwtResponse<Receptionist>(token, receptionist));
+        }
+        else{
+            return ResponseEntity.ok(null);
+        }
     }
     private void authenticate(String username, String password) throws Exception {
         try {

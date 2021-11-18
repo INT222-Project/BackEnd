@@ -9,9 +9,9 @@ import java.util.Collection;
 public class AuthenticationUser implements UserDetails {
     private final String username;
     private final String password;
-    private final Collection<GrantedAuthority> authorities;
+    private final Collection<Role> authorities;
 
-    public AuthenticationUser(String username, String password, Collection<GrantedAuthority> authorities) {
+    public AuthenticationUser(String username, String password, Collection<Role> authorities) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;
@@ -34,21 +34,21 @@ public class AuthenticationUser implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

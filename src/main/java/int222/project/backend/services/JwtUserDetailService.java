@@ -3,6 +3,7 @@ package int222.project.backend.services;
 import int222.project.backend.models.AuthenticationUser;
 import int222.project.backend.models.Customer;
 import int222.project.backend.models.Receptionist;
+import int222.project.backend.models.Role;
 import int222.project.backend.repositories.CustomerRepository;
 import int222.project.backend.repositories.ReceptionistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class JwtUserDetailService implements UserDetailsService {
@@ -27,14 +29,20 @@ public class JwtUserDetailService implements UserDetailsService {
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    public UserDetails loadUserByUsername(String s){
+    public AuthenticationUser loadUserByUsername(String s){
         Customer customer = customerRepository.findCustomerByEmail(s).orElse(null);
         Receptionist receptionist = receptionistRepository.findReceptionistByEmail(s).orElse(null);
         if(customer != null){
-            return new User(customer.getEmail(),bCryptPasswordEncoder.encode(customer.getPassword()),new ArrayList<>());
+            Role role = new Role("customer");
+            List<Role> roles= new ArrayList<>();
+            roles.add(role);
+            return new AuthenticationUser(customer.getEmail(),bCryptPasswordEncoder.encode(customer.getPassword()),roles);
         }
         else if(receptionist != null){
-            return new User(receptionist.getEmail(),bCryptPasswordEncoder.encode(receptionist.getPassword()),new ArrayList<>());
+            Role role = new Role("receptionist");
+            List<Role> roles= new ArrayList<>();
+            roles.add(role);
+            return new AuthenticationUser(receptionist.getEmail(),bCryptPasswordEncoder.encode(receptionist.getPassword()),roles);
         }
         else{
             throw new UsernameNotFoundException("User not found with username: " + s);
