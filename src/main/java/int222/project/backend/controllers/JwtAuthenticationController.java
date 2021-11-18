@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
 @RequestMapping("/api/auth")
 public class JwtAuthenticationController {
 
