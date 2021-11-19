@@ -46,10 +46,10 @@ public class JwtAuthenticationController {
         Customer customer = customerRepository.findCustomerByEmail(authenticationUser.getUsername()).orElse(null);
         Receptionist receptionist = receptionistRepository.findReceptionistByEmail(authenticationUser.getUsername()).orElse(null);
         if(customer != null){
-            return ResponseEntity.ok(new JwtResponse<Customer>(token, customer));
+            return ResponseEntity.ok(new JwtResponse<Customer>(token, customer, authenticationUser.getAuthorities()));
         }
         else if(receptionist != null){
-            return ResponseEntity.ok(new JwtResponse<Receptionist>(token, receptionist));
+            return ResponseEntity.ok(new JwtResponse<Receptionist>(token, receptionist,authenticationUser.getAuthorities()));
         }
         else{
             return ResponseEntity.ok(null);
