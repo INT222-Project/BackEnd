@@ -26,6 +26,11 @@ public class JwtResponse<T> implements Serializable {
             ((Receptionist) object).setPassword(encodePassword);
             this.object = object;
         }
+        else if(object.getClass() == Admin.class){
+            String encodePassword = passwordEncoder.encode(((Admin) object).getPassword());
+            ((Admin) object).setPassword(encodePassword);
+            this.object = object;
+        }
         this.role = role;
     }
 

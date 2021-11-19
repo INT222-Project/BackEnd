@@ -51,6 +51,10 @@ public class JwtAuthenticationController {
         else if(receptionist != null){
             return ResponseEntity.ok(new JwtResponse<Receptionist>(token, receptionist,authenticationUser.getAuthorities()));
         }
+        else if(authenticationUser.getAuthorities().stream().findFirst().get().getAuthority() == "admin"){
+            Admin admin = new Admin(authenticationUser.getUsername(),authenticationUser.getPassword());
+            return ResponseEntity.ok(new JwtResponse<Admin>(token, admin,authenticationUser.getAuthorities()));
+        }
         else{
             return ResponseEntity.ok(null);
         }

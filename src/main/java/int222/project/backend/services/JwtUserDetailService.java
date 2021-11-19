@@ -44,6 +44,12 @@ public class JwtUserDetailService implements UserDetailsService {
             roles.add(role);
             return new AuthenticationUser(receptionist.getEmail(),bCryptPasswordEncoder.encode(receptionist.getPassword()),roles);
         }
+        else if(s.equals("admin")){
+            Role role = new Role("admin");
+            List<Role> roles = new ArrayList<>();
+            roles.add(role);
+            return new AuthenticationUser(s,bCryptPasswordEncoder.encode("admin"),roles);
+        }
         else{
             throw new UsernameNotFoundException("User not found with username: " + s);
         }
