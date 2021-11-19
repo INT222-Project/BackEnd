@@ -3,6 +3,7 @@ package int222.project.backend.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -44,14 +45,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // We don't need CSRF for this example
         httpSecurity.cors().and().csrf().disable();
                 // dont authenticate this particular request
+        //authenticate by anyone
         httpSecurity.authorizeRequests().antMatchers("/api/auth/authenticate").permitAll();
-        httpSecurity.authorizeRequests().antMatchers("/api/roomTypes").permitAll();
-        httpSecurity.authorizeRequests().antMatchers("/api/packages").permitAll();
-        httpSecurity.authorizeRequests().antMatchers("/api/rooms/showImage/{roomid}").permitAll();
-        httpSecurity.authorizeRequests().antMatchers("/api/roomTypes/{roomtypeid}").permitAll();
-        httpSecurity.authorizeRequests().antMatchers("/api/rooms/roomRequirement/**").permitAll();
-//        httpSecurity.authorizeRequests().antMatchers("/api/rooms/getRemainingRoom/{roomtypeid}").permitAll();
-        httpSecurity.authorizeRequests().antMatchers("/api/rooms/getRemainingRoom/**").permitAll();
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/packages").permitAll();
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/paymentMethods").permitAll();
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/rooms/**").permitAll();
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/roomTypes/**").permitAll();
+//        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/rooms/roomRequirement/**").permitAll();
+//        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/rooms/getRemainingRoom/**").permitAll();
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"api/reservation/add").hasAnyAuthority("customer");
+        // authenticate by staff
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/reservations/**").hasAuthority("receptionist");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/reservations/**").hasAuthority("receptionist");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/reservationDetails/**").hasAnyAuthority("receptionist");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/reservationDetails/**").hasAnyAuthority("receptionist");
+        // authenticate by admin
+        httpSecurity.authorizeRequests().antMatchers("/api/**").hasAnyAuthority("admin");
         // all other requests need to be authenticated
         httpSecurity.authorizeRequests().anyRequest().authenticated().and().
                 // make sure we use stateless session; session won't be used to
