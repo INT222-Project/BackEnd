@@ -42,4 +42,11 @@ public class ReceptionistController {
     @GetMapping("")
     public List<Receptionist> getAllReceptionists(){ return receptionistRepository.findAll(); }
 
+    @PutMapping("/edit/{repId}")
+    public void editReceptionist(@RequestPart("editReceptionist") Receptionist receptionist, @PathVariable String repId){
+        Receptionist temp = this.receptionistRepository.findById(repId).orElse(null);
+        if(temp != null){
+            this.receptionistRepository.saveAndFlush(receptionist);
+        }
+    }
 }

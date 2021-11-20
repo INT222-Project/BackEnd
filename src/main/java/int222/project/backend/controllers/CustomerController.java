@@ -43,4 +43,11 @@ public class CustomerController {
     @GetMapping("")
     public List<Customer> getAllCustomers(){ return customerRepository.findAll(); }
 
+    @PutMapping("/edit/{customerId}")
+    public void editCustomer(@RequestPart("editCustomer") Customer customer, @PathVariable String customerId){
+        Customer temp = this.customerRepository.findById(customerId).orElse(null);
+        if(temp != null){
+            this.customerRepository.saveAndFlush(customer);
+        }
+    }
 }
