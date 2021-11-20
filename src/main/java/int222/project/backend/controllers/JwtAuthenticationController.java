@@ -6,6 +6,7 @@ import int222.project.backend.repositories.CustomerRepository;
 import int222.project.backend.repositories.ReceptionistRepository;
 import int222.project.backend.services.JwtUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,6 +16,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
@@ -59,6 +62,28 @@ public class JwtAuthenticationController {
             return ResponseEntity.ok(null);
         }
     }
+
+    @PostMapping(path = "/createUser", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void createUser(@RequestPart("newUser") Customer newCustomer){
+        List<Customer> customerList = customerRepository.findAll();
+        String latestId = null;
+        for(int i = 0 ; i < customerList.size() ; i++){
+            if(i+1 == customerList.size()-1) break;
+            String id = customerList.get(i).getCustomerId().substring(1);
+            String nextId = customerList.get(i+1).getCustomerId().substring(1);
+            if(Integer.parseInt(id)+1 != Integer.parseInt(nextId)){
+                latestId = id;
+            }
+        }
+        if(latestId == null) latestId = customerList.get(customerList.size()-1).getCustomerId().substring(1);
+        int tempId = Integer.parseInt(latestId) + 1;
+        if(tempId < 10) latestId = "c00" + tempId;
+        else if (tempId < 100) latestId = "c0" + tempId;
+        else latestId = "c" + tempId;
+        newCustomer.setCustomerId(latestId);
+        this.customerRepository.save(newCustomer);
+    }
+
     private void authenticate(String username, String password) throws Exception {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));

@@ -37,20 +37,20 @@ public class RoomController {
     @Autowired
     UploadService uploadService;
     // Room
-    @PostMapping("/uploadImage")
-    public void uploadImage(@RequestParam("image-file") MultipartFile imageFile, int roomId){
-        uploadService.saveImage(imageFile,roomId);
-    }
-    @GetMapping("/getImageSource/{roomId}")
-    public ResponseEntity<Resource> getImageSource(@PathVariable int roomId) {
-        return ResponseEntity.ok().body(uploadService.getImage(roomId));
+    @PostMapping("/uploadImage/{roomId}")
+    public void uploadImage(@RequestParam("image-file") MultipartFile imageFile,@PathVariable int roomId){
+        uploadService.saveImage(imageFile,Integer.toString(roomId));
     }
 
     @GetMapping(path = "/showImage/{roomId}")
     public ResponseEntity<byte[]> showImage(@PathVariable int roomId){
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(roomId));
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(Integer.toString(roomId),Room.class));
     }
-
+    @DeleteMapping(path="/deleteImage/{roomId}")
+    public ResponseEntity<?> deleteImage(@PathVariable int roomId){
+        uploadService.deleteImage(Integer.toString(roomId),Room.class);
+        return ResponseEntity.ok().body("Successful delete image");
+    }
     @GetMapping("/roomRequirement/{roomTypeId}")
     public List<Room> getRoomRequireRoomType(@PathVariable int roomTypeId){
         return roomRepository.findAllRoomType(roomTypeId);
@@ -127,7 +127,7 @@ public class RoomController {
         Room temp = roomRepository.findById(roomId).orElse(null);
         if(temp != null){
             roomRepository.delete(temp);
-            uploadService.deleteImage(roomId);
+            uploadService.deleteImage(Integer.toString(roomId),Room.class);
         }
     }
 
