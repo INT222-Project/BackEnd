@@ -52,9 +52,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/paymentMethods/**").permitAll();
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/rooms/**").permitAll();
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/roomTypes/**").permitAll();
-//        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/rooms/roomRequirement/**").permitAll();
-//        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/rooms/getRemainingRoom/**").permitAll();
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"api/reservation/add").hasAnyAuthority("customer","admin");
+        // authenticate by customer
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"/api/reservation/add").hasAnyAuthority("customer","admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"/api/customers/uploadImage").hasAnyAuthority("customer","receptionist","admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/customers/showImage/**").hasAnyAuthority("customer","receptionist","admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE,"/api/customers/deleteImage/**").hasAnyAuthority("customer","receptionist","admin");
         // authenticate by staff
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/reservations/**").hasAnyAuthority("receptionist","admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/reservations/**").hasAnyAuthority("receptionist","admin");

@@ -1,6 +1,7 @@
 package int222.project.backend.controllers;
 
 import int222.project.backend.models.Customer;
+import int222.project.backend.models.Room;
 import int222.project.backend.repositories.CustomerRepository;
 import int222.project.backend.services.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,11 @@ public class CustomerController {
     @GetMapping(path = "/showImage/{customerId}")
     public ResponseEntity<byte[]> showImage(@PathVariable String customerId){
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(customerId,Customer.class));
+    }
+    @DeleteMapping(path="/deleteImage/{customerId}")
+    public ResponseEntity<?> deleteImage(@PathVariable String customerId){
+        uploadService.deleteImage(customerId, Customer.class);
+        return ResponseEntity.ok().body("Successful delete image");
     }
 
     @GetMapping("/{customerId}")
