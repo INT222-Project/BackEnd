@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -82,6 +83,22 @@ public class JwtAuthenticationController {
         else latestId = "c" + tempId;
         newCustomer.setCustomerId(latestId);
         this.customerRepository.save(newCustomer);
+    }
+
+    @GetMapping(path = "/getAllUsers")
+    public ResponseEntity<?> getAllUsers(){
+        List<Customer> customerList = customerRepository.findAll();
+        List<Receptionist> receptionistList = receptionistRepository.findAll();
+        List<JwtResponse<? extends Object>> responses = new ArrayList<>();
+        for(Customer temp : customerList){
+            AuthenticationUser authenticationUser = jwtUserDetailService.loadUserByUsername(temp.getEmail());
+            responses.add(new JwtResponse<Customer>(null,temp,authenticationUser.getAuthorities()));
+        }
+        for(Receptionist temp: receptionistList){
+            AuthenticationUser authenticationUser = jwtUserDetailService.loadUserByUsername(temp.getEmail());
+            responses.add(new JwtResponse<Receptionist>(null,temp,authenticationUser.getAuthorities()));
+        }
+        return ResponseEntity.ok(responses);
     }
 
     private void authenticate(String username, String password) throws Exception {
