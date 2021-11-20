@@ -39,7 +39,7 @@ public class RoomController {
     // Room
     @PostMapping("/uploadImage/{roomId}")
     public void uploadImage(@RequestParam("image-file") MultipartFile imageFile,@PathVariable int roomId){
-        uploadService.saveImage(imageFile,Integer.toString(roomId));
+        uploadService.saveImage(imageFile,Integer.toString(roomId),Room.class);
     }
 
     @GetMapping(path = "/showImage/{roomId}")

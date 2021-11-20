@@ -22,9 +22,9 @@ public class CustomerController {
     @Autowired
     UploadService uploadService;
     // Customer
-    @PostMapping("/uploadImage")
-    public void uploadImage(@RequestParam("image-file") MultipartFile imageFile, String customerId){
-        uploadService.saveImage(imageFile,customerId);
+    @PostMapping("/uploadImage/{customerId}")
+    public void uploadImage(@RequestParam("image-file") MultipartFile imageFile,@PathVariable String customerId){
+        uploadService.saveImage(imageFile,customerId,Customer.class);
     }
 
     @GetMapping(path = "/showImage/{customerId}")

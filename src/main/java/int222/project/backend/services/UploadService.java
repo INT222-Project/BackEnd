@@ -2,6 +2,7 @@ package int222.project.backend.services;
 
 import int222.project.backend.exceptions.ExceptionResponse;
 import int222.project.backend.exceptions.ImageHandlerException;
+import int222.project.backend.models.Admin;
 import int222.project.backend.models.Customer;
 import int222.project.backend.models.Receptionist;
 import int222.project.backend.models.Room;
@@ -20,11 +21,17 @@ import java.nio.file.Path;
 public class UploadService {
     final private ImageFilter imageFilter = new ImageFilter();
 
-    public void saveImage(MultipartFile file, String id){
+    public void saveImage(MultipartFile file, String id,Class<? extends Object> tClass){
         try {
             String folder = "";
-            if(id.charAt(0) == 'c'){
-                folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/";
+            if(tClass.equals(Customer.class)){
+                folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/customer/";
+            }
+            else if(tClass.equals(Receptionist.class)){
+                folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/receptionist/";
+            }
+            else if(tClass.equals(Admin.class)){
+                folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/admin/";
             }
             else{
                 folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/room-storage/";
@@ -49,6 +56,12 @@ public class UploadService {
             if(tClass.equals(Customer.class)){
                  file = getCustomerFile(id);
             }
+            else if(tClass.equals(Receptionist.class)){
+                file = getReceptionistFile(id);
+            }
+            else if(tClass.equals(Admin.class)){
+                file = getAdminFile(id);
+            }
             else if(tClass.equals(Room.class)){
                 file = getRoomFile(id);
             }
@@ -68,6 +81,39 @@ public class UploadService {
         return data;
     }
 
+    private File getAdminFile(String id) throws ImageHandlerException,IOException{
+        String folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/admin/";
+        File file = getFile(id,folder);
+        if(file != null){
+            return file;
+        }
+        else{
+            return getAdminFile("default");
+        }
+    }
+
+    private File getReceptionistFile(String id) throws ImageHandlerException,IOException{
+        String folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/receptionist/";
+        File file = getFile(id,folder);
+        if(file != null){
+            return file;
+        }
+        else{
+            return getReceptionistFile("default");
+        }
+    }
+
+    private File getCustomerFile(String id) throws ImageHandlerException,IOException {
+        String folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/customer/";
+        File file = getFile(id,folder);
+        if(file != null){
+            return file;
+        }
+        else{
+            return getCustomerFile("default");
+        }
+    }
+
     private File getRoomFile(String id) throws ImageHandlerException,IOException {
         String folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/room-storage/";
         File file = getFile(id,folder);
@@ -76,17 +122,6 @@ public class UploadService {
         }
         else{
             throw new ImageHandlerException("No such a file name "+ id, ExceptionResponse.ERROR_CODE.IMAGE_DOES_NOT_EXISTS);
-        }
-    }
-
-    private File getCustomerFile(String id) throws ImageHandlerException,IOException {
-        String folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/";
-        File file = getFile(id,folder);
-        if(file != null){
-            return file;
-        }
-        else{
-            return getCustomerFile("default");
         }
     }
 
@@ -113,13 +148,20 @@ public class UploadService {
             if(tClass.equals(Customer.class)){
                 file = getCustomerFile(id);
             }
+            else if(tClass.equals(Receptionist.class)){
+                file = getReceptionistFile(id);
+            }
+            else if(tClass.equals(Admin.class)){
+                file = getAdminFile(id);
+            }
             else if(tClass.equals(Room.class)){
                 file = getRoomFile(id);
             }
             else{
                 throw new IOException();
             }
-            file.delete();
+            if(!file.getName().equals("default.png")) file.delete();
+            else throw new IOException();
         }
         catch (ImageHandlerException e){
             System.out.println(e.getMessage());
