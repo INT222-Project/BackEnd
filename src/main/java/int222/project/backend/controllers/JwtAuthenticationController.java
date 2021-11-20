@@ -87,7 +87,7 @@ public class JwtAuthenticationController {
 
     @GetMapping(path = "/getAllUsers")
     public ResponseEntity<?> getAllUsers(){
-        List<JwtResponse<? extends Object>> responses = new ArrayList<>();
+        List<JwtResponse<?>> responses = new ArrayList<>();
         for(Customer temp : customerRepository.findAll()){
             AuthenticationUser authenticationUser = jwtUserDetailService.loadUserByUsername(temp.getEmail());
             responses.add(new JwtResponse<Customer>(null,temp,authenticationUser.getAuthorities()));
