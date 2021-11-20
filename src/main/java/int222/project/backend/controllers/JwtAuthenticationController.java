@@ -87,14 +87,12 @@ public class JwtAuthenticationController {
 
     @GetMapping(path = "/getAllUsers")
     public ResponseEntity<?> getAllUsers(){
-        List<Customer> customerList = customerRepository.findAll();
-        List<Receptionist> receptionistList = receptionistRepository.findAll();
         List<JwtResponse<? extends Object>> responses = new ArrayList<>();
-        for(Customer temp : customerList){
+        for(Customer temp : customerRepository.findAll()){
             AuthenticationUser authenticationUser = jwtUserDetailService.loadUserByUsername(temp.getEmail());
             responses.add(new JwtResponse<Customer>(null,temp,authenticationUser.getAuthorities()));
         }
-        for(Receptionist temp: receptionistList){
+        for(Receptionist temp: receptionistRepository.findAll()){
             AuthenticationUser authenticationUser = jwtUserDetailService.loadUserByUsername(temp.getEmail());
             responses.add(new JwtResponse<Receptionist>(null,temp,authenticationUser.getAuthorities()));
         }
