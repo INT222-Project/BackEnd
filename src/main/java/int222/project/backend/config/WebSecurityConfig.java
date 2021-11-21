@@ -56,7 +56,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/customers/edit/**").hasAnyAuthority("customer","admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"/api/reservations/add").hasAnyAuthority("customer","admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"/api/customers/uploadImage/**").hasAnyAuthority("customer","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/customers/showImage/**").hasAnyAuthority("customer","admin");
+//        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/customers/showImage/**").hasAnyAuthority("customer","admin");
+                httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/customers/showImage/**").permitAll();
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE,"/api/customers/deleteImage/**").hasAnyAuthority("customer","admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/reservations/byCustomerId/**").hasAnyAuthority("customer","receptionist","admin");
         // authenticate by staff
@@ -65,7 +66,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/reservationDetails/**").hasAnyAuthority("receptionist","admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/reservationDetails/**").hasAnyAuthority("receptionist","admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"/api/receptionists/uploadImage").hasAnyAuthority("receptionist","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/receptionists/showImage/**").hasAnyAuthority("receptionist","admin");
+//        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/receptionists/showImage/**").hasAnyAuthority("receptionist","admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/receptionists/showImage/**").permitAll();
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE,"/api/receptionists/deleteImage/**").hasAnyAuthority("receptionist","admin");
         // authenticate by admin
         httpSecurity.authorizeRequests()
