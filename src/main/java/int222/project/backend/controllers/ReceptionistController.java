@@ -5,6 +5,7 @@ import int222.project.backend.models.Receptionist;
 import int222.project.backend.repositories.ReceptionistRepository;
 import int222.project.backend.services.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,10 @@ public class ReceptionistController {
     public void uploadImage(@RequestParam("image-file") MultipartFile imageFile,@PathVariable String repId){
         uploadService.saveImage(imageFile,repId, Receptionist.class);
     }
-
+    @GetMapping(path = "/showResource/{repId}")
+    public ResponseEntity<Resource> showResource(@PathVariable String repId){
+        return ResponseEntity.ok().body(uploadService.getImage(repId));
+    }
     @GetMapping(path = "/showImage/{repId}")
     public ResponseEntity<byte[]> showImage(@PathVariable String repId){
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(repId,Receptionist.class));
