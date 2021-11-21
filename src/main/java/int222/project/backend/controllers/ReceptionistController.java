@@ -46,6 +46,7 @@ public class ReceptionistController {
     public void editReceptionist(@RequestPart("editReceptionist") Receptionist receptionist, @PathVariable String repId){
         Receptionist temp = this.receptionistRepository.findById(repId).orElse(null);
         if(temp != null){
+            System.out.println(repId);
             this.receptionistRepository.saveAndFlush(receptionist);
         }
     }

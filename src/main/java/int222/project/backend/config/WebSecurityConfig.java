@@ -54,7 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/roomTypes/**").permitAll();
         // authenticate by customer
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/customers/edit/**").hasAnyAuthority("customer","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"/api/reservation/add").hasAnyAuthority("customer","admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"/api/reservations/add").hasAnyAuthority("customer","admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"/api/customers/uploadImage/**").hasAnyAuthority("customer","admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/customers/showImage/**").hasAnyAuthority("customer","admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE,"/api/customers/deleteImage/**").hasAnyAuthority("customer","admin");
