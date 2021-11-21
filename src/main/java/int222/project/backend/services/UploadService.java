@@ -48,35 +48,6 @@ public class UploadService {
             System.out.println("Could not save image.");
         }
     }
-    public Resource getImage(String id){
-//        Image image = null;
-        Resource resource = null;
-        Path path = null;
-        try {
-            String folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/receptionist/";
-            File[] listOfFile = ResourceUtils.getFile(folder).listFiles();
-            if(listOfFile != null){
-                for(File temp : listOfFile){
-                    String extension = temp.getName().substring(temp.getName().lastIndexOf("."));
-//                    System.out.println("extension : " +extension);
-//                    System.out.println("product code + extension : " + productCode+extension);
-//                    System.out.println("temp.getName() : "  + temp.getName());
-                    if(temp.getName().equals(id+extension)){
-                        path = temp.toPath();
-                    }
-                }
-            }
-            System.out.println(path.getFileName());
-//            File file = ResourceUtils.getFile(folder + productCode + ".jpg");
-//            image = ImageIO.read(file);
-            resource = new UrlResource(path.toUri());
-        }
-        catch (IOException e){
-            System.out.println(e.getMessage());
-            System.out.println("Could not get Image file.");
-        }
-        return resource;
-    }
 
     public byte[] get(String id,Class<? extends Object> tClass) {
         byte[] data = null;

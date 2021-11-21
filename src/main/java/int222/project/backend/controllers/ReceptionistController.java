@@ -26,10 +26,6 @@ public class ReceptionistController {
     public void uploadImage(@RequestParam("image-file") MultipartFile imageFile,@PathVariable String repId){
         uploadService.saveImage(imageFile,repId, Receptionist.class);
     }
-    @GetMapping(path = "/showResource/{repId}")
-    public ResponseEntity<Resource> showResource(@PathVariable String repId){
-        return ResponseEntity.ok().body(uploadService.getImage(repId));
-    }
     @GetMapping(path = "/showImage/{repId}")
     public ResponseEntity<byte[]> showImage(@PathVariable String repId){
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(repId,Receptionist.class));
