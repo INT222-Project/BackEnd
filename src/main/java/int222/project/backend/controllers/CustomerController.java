@@ -43,7 +43,7 @@ public class CustomerController {
     @GetMapping("")
     public List<Customer> getAllCustomers(){ return customerRepository.findAll(); }
 
-    @PutMapping("/edit/{customerId}")
+    @PutMapping(path = "/edit/{customerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void editCustomer(@RequestPart("editCustomer") Customer customer, @PathVariable String customerId){
         Customer temp = this.customerRepository.findById(customerId).orElse(null);
         if(temp != null){
