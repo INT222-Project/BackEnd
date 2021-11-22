@@ -43,11 +43,14 @@ public class ReceptionistController {
     public List<Receptionist> getAllReceptionists(){ return receptionistRepository.findAll(); }
 
     @PutMapping(path = "/edit/{repId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void editReceptionist(@RequestPart("editReceptionist") Receptionist receptionist, @PathVariable String repId){
+    public void editReceptionist(@RequestParam(value = "image-file",required = false) MultipartFile imageFile,@RequestPart("editReceptionist") Receptionist receptionist, @PathVariable String repId){
         Receptionist temp = this.receptionistRepository.findById(repId).orElse(null);
         if(temp != null){
-            System.out.println(repId);
-            this.receptionistRepository.saveAndFlush(receptionist);
+            temp = receptionist;
         }
+        if(imageFile != null){
+            uploadImage(imageFile,repId);
+        }
+        this.receptionistRepository.saveAndFlush(temp);
     }
 }

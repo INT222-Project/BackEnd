@@ -44,10 +44,14 @@ public class CustomerController {
     public List<Customer> getAllCustomers(){ return customerRepository.findAll(); }
 
     @PutMapping(path = "/edit/{customerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void editCustomer(@RequestPart("editCustomer") Customer customer, @PathVariable String customerId){
+    public void editCustomer(@RequestParam(value = "image-file",required = false) MultipartFile imageFile, @RequestPart("editCustomer") Customer customer, @PathVariable String customerId){
         Customer temp = this.customerRepository.findById(customerId).orElse(null);
         if(temp != null){
-            this.customerRepository.saveAndFlush(customer);
+            temp = customer;
         }
+        if(imageFile != null){
+            uploadImage(imageFile,customerId);
+        }
+        this.customerRepository.saveAndFlush(temp);
     }
 }

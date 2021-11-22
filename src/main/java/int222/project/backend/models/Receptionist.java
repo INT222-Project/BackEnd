@@ -1,13 +1,12 @@
 package int222.project.backend.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="receptionist")
 public class Receptionist {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String repId;
     private String email;
     private String password;
@@ -83,5 +82,18 @@ public class Receptionist {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "Receptionist{" +
+                "repId='" + repId + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", fName='" + fName + '\'' +
+                ", lName='" + lName + '\'' +
+                ", telNo='" + telNo + '\'' +
+                ", address='" + address + '\'' +
+                '}';
     }
 }
