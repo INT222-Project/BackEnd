@@ -50,6 +50,7 @@ public class CustomerController {
             temp = customer;
         }
         if(imageFile != null){
+            deleteImage(customerId);
             uploadImage(imageFile,customerId);
         }
         this.customerRepository.saveAndFlush(temp);

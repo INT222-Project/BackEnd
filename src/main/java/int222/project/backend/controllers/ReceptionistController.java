@@ -49,6 +49,7 @@ public class ReceptionistController {
             temp = receptionist;
         }
         if(imageFile != null){
+            deleteImage(repId);
             uploadImage(imageFile,repId);
         }
         this.receptionistRepository.saveAndFlush(temp);

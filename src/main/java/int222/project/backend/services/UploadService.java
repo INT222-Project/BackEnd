@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Path;
+import java.util.Objects;
 
 @Component
 public class UploadService {
@@ -37,7 +38,7 @@ public class UploadService {
                 folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/room-storage/";
             }
             byte[] bytes = file.getBytes();
-            String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+            String extension = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf("."));
 //            System.out.println(folder);
             System.out.println(extension);
             FileOutputStream outputStream = new FileOutputStream(folder + id + extension);
