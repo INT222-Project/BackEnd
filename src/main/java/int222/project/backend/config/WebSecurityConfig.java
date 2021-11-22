@@ -62,6 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE,"/api/customers/deleteImage/**").hasAnyAuthority("customer","admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/reservations/byCustomerId/**").hasAnyAuthority("customer","receptionist","admin");
         // authenticate by staff
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/receptionists/edit/**").hasAnyAuthority("receptionist","admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/reservations/**").hasAnyAuthority("receptionist","admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/reservations/**","/api/receptionists/edit/**").hasAnyAuthority("receptionist","admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/reservationDetails/**").hasAnyAuthority("receptionist","admin");
