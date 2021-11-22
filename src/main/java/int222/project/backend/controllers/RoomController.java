@@ -56,13 +56,14 @@ public class RoomController {
         return roomRepository.findAllRoomType(roomTypeId);
     }
 
-    @GetMapping("/getRemainingRoom")
-    public List<RemainingRoomObject> getRemainingRoom(){
+    @GetMapping("/getRemainingRoom/{checkIn}/{checkOut}")
+    public List<RemainingRoomObject> getRemainingRoom(@PathVariable String checkIn, @PathVariable String checkOut){
         List<RemainingRoomObject> remainingRoomObjects = new ArrayList<>();
         try{
             Class.forName(driverName);
             Connection connection = DriverManager.getConnection(this.url,this.username,this.password);
-            String query = "select roomtypeid,bedtype, count((select r2.status from room r2 where r2.status != 'mockup'and r2.status = 'Available' and r2.roomid = room.roomid)) as remaining_room from room where status != 'mock-up' group by roomtypeid, bedtype;";
+            String query = "select roomtypeid, bedtype, count(roomtypeid) as remaining_room from room where NOT EXISTS(select * from reservationdetail r where r.roomid = room.roomid and r.status != 'undone' and r.status != 'check-out' and r.checkindate >= '"+checkIn +"' and r.checkoutdate <= '"+checkOut+"') and room.status != 'mock-up' group by roomtypeid, bedtype;";
+            System.out.println(query);
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
             while (rs.next())
