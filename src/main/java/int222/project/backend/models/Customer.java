@@ -6,7 +6,6 @@ import javax.persistence.*;
 @Table(name="customer")
 public class Customer {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String customerId;
     private String email;
     private String password;

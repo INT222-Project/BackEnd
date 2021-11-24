@@ -62,7 +62,8 @@ public class RoomController {
         try{
             Class.forName(driverName);
             Connection connection = DriverManager.getConnection(this.url,this.username,this.password);
-            String query = "select roomtypeid, bedtype, count(roomtypeid) as remaining_room from room where NOT EXISTS(select * from reservationdetail r where r.roomid = room.roomid and r.status != 'undone' and r.status != 'check-out' and r.checkindate >= '"+checkIn +"' and r.checkoutdate <= '"+checkOut+"') and room.status != 'mock-up' group by roomtypeid, bedtype;";
+            String query
+                    = "select t1.roomtypeid, t1.bedtype,t2.amount_room - t1.reserved_room as remaining_room from (select r.roomtypeid , r.bedtype , count(*) as reserved_room from reservationdetail rd join room r on rd.roomid = r.roomid where rd.status != 'undone' and rd.status != 'check-out' and rd.checkindate >= '"+ checkIn + "' and rd.checkoutdate <= '"+ checkOut +"' group by r.roomtypeid, r.bedtype) t1 join (select r.roomtypeid , r.bedtype , count(*) as amount_room from room r where r.status != 'mock-up' group by r.roomtypeid, r.bedtype) t2 on t1.roomtypeid = t2.roomtypeid where t1.bedtype = t2.bedtype order by roomtypeid asc;";
             System.out.println(query);
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);

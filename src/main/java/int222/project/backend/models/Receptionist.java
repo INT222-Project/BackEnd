@@ -6,7 +6,6 @@ import javax.persistence.*;
 @Table(name="receptionist")
 public class Receptionist {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String repId;
     private String email;
     private String password;
