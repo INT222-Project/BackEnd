@@ -71,7 +71,7 @@ public class JwtAuthenticationController {
     }
 
     @PostMapping(path = "/createUser", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void createUser(@RequestPart("newUser") Customer newCustomer){
+    public ResponseEntity<?> createUser(@RequestPart("newUser") Customer newCustomer){
         List<Customer> customerList = customerRepository.findAll();
         String latestId = null;
         for(int i = 0 ; i < customerList.size() ; i++){
@@ -88,7 +88,12 @@ public class JwtAuthenticationController {
         else if (tempId < 100) latestId = "c0" + tempId;
         else latestId = "c" + tempId;
         newCustomer.setCustomerId(latestId);
-        this.customerRepository.save(newCustomer);
+        try {
+            return ResponseEntity.ok(this.customerRepository.save(newCustomer));
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new Error("Sorry, We could not create user." + e.getMessage(),HttpStatus.NOT_ACCEPTABLE.value()));
+        }
     }
 
     @GetMapping(path = "/getAllUsers")
