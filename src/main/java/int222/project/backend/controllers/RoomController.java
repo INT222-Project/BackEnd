@@ -1,5 +1,6 @@
 package int222.project.backend.controllers;
 
+import int222.project.backend.exceptions.ImageHandlerException;
 import int222.project.backend.models.Room;
 import int222.project.backend.repositories.RoomRepository;
 import int222.project.backend.services.RemainingRoomObject;
@@ -7,11 +8,13 @@ import int222.project.backend.services.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -38,13 +41,17 @@ public class RoomController {
     UploadService uploadService;
     // Room
     @PostMapping("/uploadImage/{roomId}")
-    public void uploadImage(@RequestParam("image-file") MultipartFile imageFile,@PathVariable int roomId){
+    public void uploadImage(@RequestParam("image-file") MultipartFile imageFile,@PathVariable int roomId) throws IOException {
         uploadService.saveImage(imageFile,Integer.toString(roomId),Room.class);
     }
 
     @GetMapping(path = "/showImage/{roomId}")
-    public ResponseEntity<byte[]> showImage(@PathVariable int roomId){
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(Integer.toString(roomId),Room.class));
+    public ResponseEntity<?> showImage(@PathVariable int roomId){
+        try {
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(Integer.toString(roomId),Room.class));
+        } catch (ImageHandlerException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage() +" and error code : "+ e.getErrorCode());
+        }
     }
     @DeleteMapping(path="/deleteImage/{roomId}")
     public ResponseEntity<?> deleteImage(@PathVariable int roomId){
@@ -95,7 +102,7 @@ public class RoomController {
     public List<Room> getAvailableRooms(){return roomRepository.findAvailableRooms();}
 
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void addRoom(@RequestPart("newRoom") Room room,@RequestParam("image-file") MultipartFile file){
+    public ResponseEntity<?> addRoom(@RequestPart("newRoom") Room room, @RequestParam("image-file") MultipartFile file){
         int latestRoomId = 0;
         List<Room> getAllRoom = roomRepository.findAll();
         for(int i = 0 ; i < getAllRoom.size() ; i++){
@@ -109,19 +116,29 @@ public class RoomController {
         }
         if(latestRoomId == 0) latestRoomId = getAllRoom.get(getAllRoom.size()-1).getRoomId();
         room.setRoomId(latestRoomId+1);
-        uploadImage(file,room.getRoomId());
+        try {
+            uploadImage(file,room.getRoomId());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Sorry, We could not save your image file.");
+        }
         System.out.println(room.toString());
-        this.roomRepository.save(room);
+        return ResponseEntity.ok(this.roomRepository.save(room));
     }
 
     @PutMapping(path = "/edit/{roomId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void editRoom(@PathVariable int roomId , @RequestPart("editRoom") Room room, @RequestParam(value = "image-file",required = false) MultipartFile file){
+    public ResponseEntity<?> editRoom(@PathVariable int roomId , @RequestPart("editRoom") Room room, @RequestParam(value = "image-file",required = false) MultipartFile file){
         Room temp = roomRepository.findById(roomId).orElse(null);
         if(temp != null){
             temp = room;
         }
-        if(file != null) uploadImage(file,temp.getRoomId());
-        roomRepository.saveAndFlush(temp);
+        if(file != null) {
+            try {
+                uploadImage(file,temp.getRoomId());
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Sorry, We could not save your image file.");
+            }
+        }
+        return ResponseEntity.ok(roomRepository.saveAndFlush(temp));
     }
 
     @DeleteMapping(path = "/delete/{roomId}")

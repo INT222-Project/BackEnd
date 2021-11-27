@@ -29,7 +29,7 @@ public class JwtUserDetailService implements UserDetailsService {
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    public AuthenticationUser loadUserByUsername(String s){
+    public AuthenticationUser loadUserByUsername(String s) throws UsernameNotFoundException{
         Customer customer = customerRepository.findCustomerByEmail(s).orElse(null);
         Receptionist receptionist = receptionistRepository.findReceptionistByEmail(s).orElse(null);
         if(customer != null){

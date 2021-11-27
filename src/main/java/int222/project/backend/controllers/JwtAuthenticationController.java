@@ -6,6 +6,7 @@ import int222.project.backend.repositories.CustomerRepository;
 import int222.project.backend.repositories.ReceptionistRepository;
 import int222.project.backend.services.JwtUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,8 +42,9 @@ public class JwtAuthenticationController {
     ReceptionistRepository receptionistRepository;
 
     @PostMapping(value = "/authenticate")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest){
+        try {
+            authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         final AuthenticationUser authenticationUser = jwtUserDetailService
                 .loadUserByUsername(authenticationRequest.getUsername());
         final String token = jwtTokenUtil.generateToken(authenticationUser);
@@ -60,7 +62,10 @@ public class JwtAuthenticationController {
             return ResponseEntity.ok(new JwtResponse<Admin>(token, admin,authenticationUser.getAuthorities()));
         }
         else{
-            return ResponseEntity.ok(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Exception("Unable to generate token !").getMessage());
+        }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
