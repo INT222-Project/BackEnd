@@ -1,6 +1,7 @@
 package int222.project.backend.controllers;
 
 import int222.project.backend.config.JwtTokenUtil;
+import int222.project.backend.exceptions.Error;
 import int222.project.backend.models.*;
 import int222.project.backend.repositories.CustomerRepository;
 import int222.project.backend.repositories.ReceptionistRepository;
@@ -65,7 +66,7 @@ public class JwtAuthenticationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Exception("Unable to generate token !").getMessage());
         }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
         }
     }
 
