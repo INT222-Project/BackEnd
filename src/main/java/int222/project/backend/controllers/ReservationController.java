@@ -1,6 +1,7 @@
 package int222.project.backend.controllers;
 
 import com.sun.xml.bind.v2.runtime.reflect.Lister;
+import int222.project.backend.exceptions.Error;
 import int222.project.backend.models.*;
 import int222.project.backend.models.Package;
 import int222.project.backend.repositories.PackageDetailRepository;
@@ -10,6 +11,7 @@ import int222.project.backend.repositories.RoomRepository;
 import int222.project.backend.models.ReservationAddingObject;
 import int222.project.backend.models.ReservationRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -161,10 +163,10 @@ public class ReservationController {
                     }
                 }
                 reservation.setSubTotal(newTotal);
-                this.reservationRepository.save(reservation);
+                return ResponseEntity.ok(this.reservationRepository.save(reservation));
             }
         }
-        return null;
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error("Sorry Reservation no #"+ reservNo+" and Reservation Detail Id #"+reservDetailId+" could not edit packages." ,400));
     }
 
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
