@@ -1,5 +1,6 @@
 package int222.project.backend.controllers;
 
+import int222.project.backend.exceptions.Error;
 import int222.project.backend.exceptions.ImageHandlerException;
 import int222.project.backend.models.Room;
 import int222.project.backend.repositories.RoomRepository;
@@ -50,7 +51,7 @@ public class RoomController {
         try {
             return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(Integer.toString(roomId),Room.class));
         } catch (ImageHandlerException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage() +" and error code : "+ e.getErrorCode());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error(e.getMessage() +" and error code : "+ e.getErrorCode(),e.getErrorCode().hashCode()));
         }
     }
     @DeleteMapping(path="/deleteImage/{roomId}")
@@ -119,7 +120,7 @@ public class RoomController {
         try {
             uploadImage(file,room.getRoomId());
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Sorry, We could not save your image file.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error("Sorry, We could not save your image file.",500));
         }
         System.out.println(room.toString());
         return ResponseEntity.ok(this.roomRepository.save(room));
@@ -135,7 +136,7 @@ public class RoomController {
             try {
                 uploadImage(file,temp.getRoomId());
             } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Sorry, We could not save your image file.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error("Sorry, We could not save your image file.",500));
             }
         }
         return ResponseEntity.ok(roomRepository.saveAndFlush(temp));

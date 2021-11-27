@@ -63,7 +63,7 @@ public class JwtAuthenticationController {
             return ResponseEntity.ok(new JwtResponse<Admin>(token, admin,authenticationUser.getAuthorities()));
         }
         else{
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Exception("Unable to generate token !").getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error("Unable to generate token !",HttpStatus.BAD_REQUEST.value()));
         }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
