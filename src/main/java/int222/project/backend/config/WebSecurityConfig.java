@@ -86,8 +86,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.authorizeRequests()
                 .antMatchers(HttpMethod.PUT, "/api/packages/**", "/api/paymentMethods/**", "/api/rooms/**", "/api/roomTypes/**", "/api/customers/**", "/api/receptionists/**", "/api/auth/editRole").hasAuthority("admin");
         httpSecurity.authorizeRequests()
-                .antMatchers(HttpMethod.DELETE, "/api/packages/**", "/api/paymentMethods/**", "/api/rooms/**", "/api/roomTypes/**", "/api/customers/**", "/api/receptionists/**", "/api/auth/deleteUser").hasAuthority("admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/reservationDetails/**").hasAuthority("admin");
+                .antMatchers(HttpMethod.DELETE, "/api/packages/**", "/api/paymentMethods/**", "/api/rooms/**", "/api/roomTypes/**", "/api/customers/**", "/api/receptionists/**").hasAuthority("admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/reservationDetails/**", "/api/auth/deleteUser").hasAuthority("admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/reservations/**").hasAuthority("admin");
         httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET, "/api/auth/getAllUsers").hasAuthority("admin");
         //                .antMatchers("/api/packages/**","/api/paymentMethods/**","/api/reservations/**","/api/roomTypes/**","/api/reservationDetails/**","/api/customers/**","/api/receptionists/**","/api/packageDetails/**").hasAnyAuthority("admin");
