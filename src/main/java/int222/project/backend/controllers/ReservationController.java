@@ -229,7 +229,7 @@ public class ReservationController {
         this.reservationRepository.saveAndFlush(reservation);
     }
 
-    @PutMapping(path = "/delete/{reservNo}")
+    @DeleteMapping(path = "/delete/{reservNo}")
     public ResponseEntity<?> deleteReservation(@PathVariable("reservNo") String reservNo) {
         Reservation reservation = this.reservationRepository.findById(reservNo).orElse(null);
         if (reservation != null) {
