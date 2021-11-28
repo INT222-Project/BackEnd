@@ -16,7 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Configuration @EnableWebSecurity @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Configuration
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -24,6 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService jwtUserDetailsService;
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
+
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         // configure AuthenticationManager so that it knows from where to load
@@ -31,58 +34,62 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // Use BCryptPasswordEncoder
         auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         // We don't need CSRF for this example
         httpSecurity.cors().and().csrf().disable();
-                // dont authenticate this particular request
+        // dont authenticate this particular request
         //authenticate by anyone
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"/api/auth/authenticate").permitAll();
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"/api/auth/createUser").permitAll();
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/packages/**").permitAll();
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/paymentMethods/**").permitAll();
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/rooms/**").permitAll();
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/roomTypes/**").permitAll();
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST, "/api/auth/authenticate").permitAll();
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST, "/api/auth/createUser").permitAll();
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET, "/api/packages/**").permitAll();
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET, "/api/paymentMethods/**").permitAll();
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET, "/api/rooms/**").permitAll();
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET, "/api/roomTypes/**").permitAll();
         // authenticate by customer
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/customers/edit/**").hasAnyAuthority("customer","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"/api/reservations/add").hasAnyAuthority("customer","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/reservations/editCustomerPackage").hasAnyAuthority("customer","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"/api/customers/uploadImage/**").hasAnyAuthority("customer","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/reservations/getUnpaidReservation").hasAnyAuthority("customer","receptionist","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/reservations/edit").hasAnyAuthority("customer","receptionist","admin");
-//        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/customers/showImage/**").hasAnyAuthority("customer","admin");
-                httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/customers/showImage/**").permitAll();
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE,"/api/customers/deleteImage/**").hasAnyAuthority("customer","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/reservations/byCustomerId/**").hasAnyAuthority("customer","receptionist","admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/customers/edit/**").hasAnyAuthority("customer", "admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST, "/api/reservations/add").hasAnyAuthority("customer", "admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/reservations/editCustomerPackage").hasAnyAuthority("customer", "admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST, "/api/customers/uploadImage/**").hasAnyAuthority("customer", "admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET, "/api/reservations/getUnpaidReservation").hasAnyAuthority("customer", "receptionist", "admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/reservations/edit").hasAnyAuthority("customer", "receptionist", "admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/reservations/delete/**").hasAnyAuthority("customer", "admin");
+        //        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/customers/showImage/**").hasAnyAuthority("customer","admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET, "/api/customers/showImage/**").permitAll();
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/customers/deleteImage/**").hasAnyAuthority("customer", "admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET, "/api/reservations/byCustomerId/**").hasAnyAuthority("customer", "receptionist", "admin");
         // authenticate by staff
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/receptionists/edit/**").hasAnyAuthority("receptionist","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/reservations/**").hasAnyAuthority("receptionist","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/reservations/**","/api/receptionists/edit/**").hasAnyAuthority("receptionist","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/reservationDetails/**").hasAnyAuthority("receptionist","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/reservationDetails/**").hasAnyAuthority("receptionist","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST,"/api/receptionists/uploadImage").hasAnyAuthority("receptionist","admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/receptionists/edit/**").hasAnyAuthority("receptionist", "admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET, "/api/reservations/**").hasAnyAuthority("receptionist", "admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/reservations/**", "/api/receptionists/edit/**").hasAnyAuthority("receptionist", "admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET, "/api/reservationDetails/**").hasAnyAuthority("receptionist", "admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/reservationDetails/**").hasAnyAuthority("receptionist", "admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.POST, "/api/receptionists/uploadImage").hasAnyAuthority("receptionist", "admin");
 //        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/receptionists/showImage/**").hasAnyAuthority("receptionist","admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/receptionists/showImage/**").permitAll();
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE,"/api/receptionists/deleteImage/**").hasAnyAuthority("receptionist","admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET, "/api/receptionists/showImage/**").permitAll();
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/receptionists/deleteImage/**").hasAnyAuthority("receptionist", "admin");
         // authenticate by admin
         httpSecurity.authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/api/packages/**","/api/paymentMethods/**","/api/rooms/**","/api/roomTypes/**","/api/customers/**","/api/receptionists/**").hasAuthority("admin");
+                .antMatchers(HttpMethod.POST, "/api/packages/**", "/api/paymentMethods/**", "/api/rooms/**", "/api/roomTypes/**", "/api/customers/**", "/api/receptionists/**").hasAuthority("admin");
         httpSecurity.authorizeRequests()
-                .antMatchers(HttpMethod.PUT,"/api/packages/**","/api/paymentMethods/**","/api/rooms/**","/api/roomTypes/**","/api/customers/**","/api/receptionists/**","/api/auth/editRole").hasAuthority("admin");
+                .antMatchers(HttpMethod.PUT, "/api/packages/**", "/api/paymentMethods/**", "/api/rooms/**", "/api/roomTypes/**", "/api/customers/**", "/api/receptionists/**", "/api/auth/editRole").hasAuthority("admin");
         httpSecurity.authorizeRequests()
-                .antMatchers(HttpMethod.DELETE,"/api/packages/**","/api/paymentMethods/**","/api/rooms/**","/api/roomTypes/**","/api/customers/**","/api/receptionists/**","/api/auth/deleteUser").hasAuthority("admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE,"/api/reservationDetails/**").hasAuthority("admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE,"/api/reservations/**").hasAuthority("admin");
-        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET,"/api/auth/getAllUsers").hasAuthority("admin");
+                .antMatchers(HttpMethod.DELETE, "/api/packages/**", "/api/paymentMethods/**", "/api/rooms/**", "/api/roomTypes/**", "/api/customers/**", "/api/receptionists/**", "/api/auth/deleteUser").hasAuthority("admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/reservationDetails/**").hasAuthority("admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/reservations/**").hasAuthority("admin");
+        httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET, "/api/auth/getAllUsers").hasAuthority("admin");
         //                .antMatchers("/api/packages/**","/api/paymentMethods/**","/api/reservations/**","/api/roomTypes/**","/api/reservationDetails/**","/api/customers/**","/api/receptionists/**","/api/packageDetails/**").hasAnyAuthority("admin");
         // all other requests need to be authenticated
         httpSecurity.authorizeRequests().anyRequest().authenticated().and().

@@ -229,6 +229,23 @@ public class ReservationController {
         this.reservationRepository.saveAndFlush(reservation);
     }
 
+    @PutMapping(path = "/delete/{reservNo}")
+    public ResponseEntity<?> deleteReservation(@PathVariable("reservNo") String reservNo) {
+        Reservation reservation = this.reservationRepository.findById(reservNo).orElse(null);
+        if (reservation != null) {
+            List<ReservationDetail> reservationDetailList = this.reservationDetailRepository.getAllReservationDetailsByReservNo(reservation.getReservNo());
+            for (ReservationDetail reservationDetail : reservationDetailList) {
+                List<PackageDetail> packageDetailList = this.packageDetailRepository.getAllPackageDetailsByReservationDetail(reservationDetail.getReservDetailId());
+                this.packageDetailRepository.deleteAll(packageDetailList);
+            }
+            this.reservationDetailRepository.deleteAll(reservationDetailList);
+            this.reservationRepository.deleteById(reservNo);
+            return ResponseEntity.ok(reservation);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error("Sorry, we could not delete reservation id : #" + reservNo, 400));
+        }
+    }
+
     private String getNextReservationNo() {
         String latestReservation = null;
         List<Reservation> getAllReservation = reservationRepository.findAll();
