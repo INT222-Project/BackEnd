@@ -6,6 +6,7 @@ import int222.project.backend.models.*;
 import int222.project.backend.repositories.CustomerRepository;
 import int222.project.backend.repositories.ReceptionistRepository;
 import int222.project.backend.services.JwtUserDetailService;
+import int222.project.backend.services.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,6 +42,9 @@ public class JwtAuthenticationController {
 
     @Autowired
     ReceptionistRepository receptionistRepository;
+
+    @Autowired
+    UploadService uploadService;
 
     @PostMapping(value = "/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) {
@@ -157,12 +161,14 @@ public class JwtAuthenticationController {
         if (role.equals("receptionist")) {
             Receptionist temp = this.receptionistRepository.findById(id).orElse(null);
             if (temp != null) {
+                this.uploadService.deleteImage(id,Receptionist.class);
                 this.receptionistRepository.delete(temp);
                 return ResponseEntity.ok(temp);
             }
         } else if (role.equals("customer")) {
             Customer temp = this.customerRepository.findById(id).orElse(null);
             if (temp != null) {
+                this.uploadService.deleteImage(id,Customer.class);
                 this.customerRepository.delete(temp);
                 return ResponseEntity.ok(temp);
             }
