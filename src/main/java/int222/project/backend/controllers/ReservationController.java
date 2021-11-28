@@ -185,10 +185,15 @@ public class ReservationController {
             this.reservationRepository.save(tempReservation);
             // add reservation detail from reservation
             String reservationDetailId = getReservationDetailId();
-            ReservationDetail tempReservationDetail = new ReservationDetail(reservationDetailId, tempReservation, reservationRequirement.getRoom(), reservationRequirement.getCheckInDate(), reservationRequirement.getCheckOutDate(), reservationRequirement.getNumOfRest(), reservationRequirement.getRoom().getRoomCharge(), "undone", null);
+            // calculate package price before adding to reservationdetail
+            List<Package> packages = reservationRequirement.getPackages();
+            double pricePackage = 0;
+            for(Package packagee : packages){
+                pricePackage += packagee.getPackageCharge();
+            }
+            ReservationDetail tempReservationDetail = new ReservationDetail(reservationDetailId, tempReservation, reservationRequirement.getRoom(), reservationRequirement.getCheckInDate(), reservationRequirement.getCheckOutDate(), reservationRequirement.getNumOfRest(), reservationRequirement.getRoom().getRoomCharge() + pricePackage, "undone", null);
             this.reservationDetailRepository.save(tempReservationDetail);
             // add package detail from reservation detail
-            List<Package> packages = reservationRequirement.getPackages();
             for (int i = 0; i < packages.size(); i++) {
                 String packageDetailId = getPackageDetailId();
                 PackageDetail tempPackageDetail = new PackageDetail(packageDetailId, tempReservationDetail, packages.get(i), packages.get(i).getPackageCharge());
