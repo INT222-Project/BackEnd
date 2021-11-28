@@ -161,12 +161,16 @@ public class ReservationController {
                 reservationDetail.setTotal(total);
                 reservationDetail.setPackageDetailList(null);
                 this.reservationDetailRepository.save(reservationDetail);
-                double newTotal = total;
+                double newTotal = 0;
                 List<ReservationDetail> reservationDetailList = this.reservationDetailRepository.getAllReservationDetailsByReservNo(reservation.getReservNo());
                 for (ReservationDetail tempReservationDetail : reservationDetailList) {
-                    if (!tempReservationDetail.getReservDetailId().equals(reservationDetail.getReservDetailId())) {
-                        newTotal += tempReservationDetail.getTotal();
-                    }
+                    double tempTotal = tempReservationDetail.getTotal();
+                    // calculate amount of days
+                    long numOfDate = TimeUnit.DAYS.convert(tempReservationDetail.getCheckOutDate().getTime() - tempReservationDetail.getCheckInDate().getTime(), TimeUnit.MILLISECONDS);
+                    System.out.println("amount of days :" + numOfDate);
+                    double roomCharge = tempReservationDetail.getRoom().getRoomCharge();
+                    double onlyPackagePrice = tempTotal - roomCharge; // it would not be less than 0 (surely)
+                    newTotal += (numOfDate * roomCharge) + onlyPackagePrice;
                 }
                 reservation.setSubTotal(newTotal);
                 return ResponseEntity.ok(this.reservationRepository.save(reservation));
