@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
+//@CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/reservations")
 public class ReservationController {

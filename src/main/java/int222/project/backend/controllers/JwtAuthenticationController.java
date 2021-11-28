@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
+//@CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
 @RequestMapping("/api/auth")
 public class JwtAuthenticationController {
 
