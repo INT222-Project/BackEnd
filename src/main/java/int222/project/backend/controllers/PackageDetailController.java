@@ -13,11 +13,16 @@ import java.util.List;
 public class PackageDetailController {
     @Autowired
     PackageDetailRepository packageDetailRepository;
+
     // Package Detail
     @GetMapping("/{packageDetailId}")
-    public PackageDetail getPackageDetail (@PathVariable String packageDetailId){ return packageDetailRepository.findById(packageDetailId).orElse(null); }
+    public PackageDetail getPackageDetail(@PathVariable String packageDetailId) {
+        return packageDetailRepository.findById(packageDetailId).orElse(null);
+    }
 
     @GetMapping("")
-    public List<PackageDetail> getAllPackageDetails(){ return packageDetailRepository.findAll(); }
+    public List<PackageDetail> getAllPackageDetails() {
+        return packageDetailRepository.findAll();
+    }
 
 }

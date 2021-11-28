@@ -2,6 +2,10 @@ package int222.project.backend.services;
 
 import int222.project.backend.exceptions.ExceptionResponse;
 import int222.project.backend.exceptions.ImageHandlerException;
+import int222.project.backend.models.Admin;
+import int222.project.backend.models.Customer;
+import int222.project.backend.models.Receptionist;
+import int222.project.backend.models.Room;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
@@ -9,112 +13,139 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
+import java.util.Objects;
 
 @Component
 public class UploadService {
     final private ImageFilter imageFilter = new ImageFilter();
 
-    public void saveImage(MultipartFile file, int roomId){
-        try {
-            String folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/room-storage/";
-            byte[] bytes = file.getBytes();
-            String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-            System.out.println(extension);
-            FileOutputStream outputStream = new FileOutputStream(folder + roomId + extension);
-            outputStream.write(bytes);
+    public void saveImage(MultipartFile file, String id, Class<? extends Object> tClass) throws IOException {
+        String folder = "";
+        if (tClass.equals(Customer.class)) {
+            folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/customer/";
+        } else if (tClass.equals(Receptionist.class)) {
+            folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/receptionist/";
+        } else if (tClass.equals(Admin.class)) {
+            folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/admin/";
+        } else {
+            folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/room-storage/";
         }
-        catch (IOException e){
-            System.out.println(e.getMessage());
-            System.out.println("Could not save image.");
-        }
+        byte[] bytes = file.getBytes();
+        String extension = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf("."));
+//            System.out.println(folder);
+        System.out.println(extension);
+        FileOutputStream outputStream = new FileOutputStream(folder + id + extension);
+        outputStream.write(bytes);
     }
 
-    public byte[] get(int roomId) {
+    public byte[] get(String id, Class<? extends Object> tClass) throws ImageHandlerException {
         byte[] data = null;
-        try{
-            File file = getFile(roomId);
+        File file = null;
+        try {
+            if (tClass.equals(Customer.class)) {
+                file = getCustomerFile(id);
+            } else if (tClass.equals(Receptionist.class)) {
+                file = getReceptionistFile(id);
+            } else if (tClass.equals(Admin.class)) {
+                file = getAdminFile(id);
+            } else if (tClass.equals(Room.class)) {
+                file = getRoomFile(id);
+            }
             BufferedImage image = ImageIO.read(file);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ImageIO.write(image,imageFilter.getExtension(file),bos);
+            ImageIO.write(image, imageFilter.getExtension(file), bos);
             data = bos.toByteArray();
-        }
-        catch (ImageHandlerException e){
+        } catch (ImageHandlerException e) {
+            throw new ImageHandlerException(e.getMessage(), e.getErrorCode());
+        } catch (IOException e) {
             System.out.println(e.getMessage());
-            System.out.println(e.getErrorCode());
-        }
-        catch (IOException e){
-            System.out.println(e.getMessage());
-            System.out.println("Could not get Image file.");
         }
         return data;
     }
 
-    public Resource getImage(int roomId){
-//        Image image = null;
-        Resource resource = null;
-        Path path = null;
-        try {
-            String folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/room-storage/";
-            File[] listOfFile = ResourceUtils.getFile(folder).listFiles();
-            if(listOfFile != null){
-                for(File temp : listOfFile){
-                    String extension = temp.getName().substring(temp.getName().lastIndexOf("."));
-//                    System.out.println("extension : " +extension);
-//                    System.out.println("product code + extension : " + productCode+extension);
-//                    System.out.println("temp.getName() : "  + temp.getName());
-                    if(temp.getName().equals(roomId+extension)){
-                        path = temp.toPath();
-                    }
-                }
-            }
-            System.out.println(path.getFileName());
-//            File file = ResourceUtils.getFile(folder + productCode + ".jpg");
-//            image = ImageIO.read(file);
-            resource = new UrlResource(path.toUri());
-        }
-        catch (IOException e){
-            System.out.println(e.getMessage());
-            System.out.println("Could not get Image file.");
-        }
-        return resource;
-    }
-    public void deleteImage(int roomId){
-        try{
-            File file = getFile(roomId);
-            file.delete();
-        }
-        catch (ImageHandlerException e){
-            System.out.println(e.getMessage());
-            System.out.println(e.getErrorCode());
-        }
-        catch (IOException e){
-            System.out.println(e.getMessage());
-            System.out.println("Could not delete Image file.");
+    private File getAdminFile(String id) throws ImageHandlerException, IOException {
+        String folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/admin/";
+        File file = getFile(id, folder);
+        if (file != null) {
+            return file;
+        } else {
+            return getAdminFile("default");
         }
     }
-    private File getFile(int roomId) throws ImageHandlerException,IOException {
-        File file = null;
+
+    private File getReceptionistFile(String id) throws ImageHandlerException, IOException {
+        String folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/receptionist/";
+        File file = getFile(id, folder);
+        if (file != null) {
+            return file;
+        } else {
+            return getReceptionistFile("default");
+        }
+    }
+
+    private File getCustomerFile(String id) throws ImageHandlerException, IOException {
+        String folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/user-storage/customer/";
+        File file = getFile(id, folder);
+        if (file != null) {
+            return file;
+        } else {
+            return getCustomerFile("default");
+        }
+    }
+
+    private File getRoomFile(String id) throws ImageHandlerException, IOException {
         String folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/room-storage/";
+        File file = getFile(id, folder);
+        if (file != null) {
+            return file;
+        } else {
+            throw new ImageHandlerException("Sorry, We could not get your image file. with id : " + id, ExceptionResponse.ERROR_CODE.IMAGE_DOES_NOT_EXISTS);
+        }
+    }
+
+    private File getFile(String id, String folder) throws FileNotFoundException {
+        File file = null;
         File[] listOfFile = ResourceUtils.getFile(folder).listFiles();
-        if(listOfFile != null) {
+        if (listOfFile != null) {
             for (File temp : listOfFile) {
                 String extension = temp.getName().substring(temp.getName().lastIndexOf("."));
 //                    System.out.println("extension : " +extension);
 //                    System.out.println("product code + extension : " + roomId +extension);
 //                    System.out.println("temp.getName() : "  + temp.getName());
-                if (temp.getName().equals(roomId + extension)) {
+                if (temp.getName().equals(id + extension)) {
                     file = temp;
                 }
             }
         }
-//        System.out.println(file.getName());
-        if(file == null) throw new ImageHandlerException("No such a file name "+ roomId, ExceptionResponse.ERROR_CODE.IMAGE_DOES_NOT_EXISTS);
         return file;
+    }
+
+    public void deleteImage(String id, Class<? extends Object> tClass) {
+        File file = null;
+        try {
+            if (tClass.equals(Customer.class)) {
+                file = getCustomerFile(id);
+            } else if (tClass.equals(Receptionist.class)) {
+                file = getReceptionistFile(id);
+            } else if (tClass.equals(Admin.class)) {
+                file = getAdminFile(id);
+            } else if (tClass.equals(Room.class)) {
+                file = getRoomFile(id);
+            } else {
+                throw new IOException();
+            }
+            if (!file.getName().equals("default.png")) file.delete();
+            else throw new IOException();
+        } catch (ImageHandlerException e) {
+            System.out.println(e.getMessage());
+            System.out.println(e.getErrorCode());
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Could not delete Image file.");
+        }
     }
 }

@@ -11,7 +11,7 @@ public class PackageDetail {
     private String packageDetailId;
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name= "reservdetailid")
+    @JoinColumn(name = "reservdetailid")
     private ReservationDetail reservDetailId;
     @ManyToOne
     @JoinColumn(name = "packageid")

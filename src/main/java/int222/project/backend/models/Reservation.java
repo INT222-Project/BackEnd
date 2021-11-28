@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name="reservation")
+@Table(name = "reservation")
 public class Reservation {
     @Id
     private String reservNo;
@@ -16,22 +16,22 @@ public class Reservation {
     @JoinColumn(name = "customerid")
     private Customer customerId;
     @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "UTC")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "UTC")
     private Date paymentDate;
     @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "UTC")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "UTC")
     private Date reservationDate;
     @ManyToOne
     @JoinColumn(name = "paymentmethodid")
     private PaymentMethod paymentMethodId;
     private double subTotal;
-    @JoinColumn(name="status")
+    @JoinColumn(name = "status")
     private String status;
     @ManyToOne
     @JoinColumn(name = "repid")
     private Receptionist repId;
     @JsonManagedReference
-    @OneToMany(mappedBy = "reservNo",cascade = CascadeType.ALL, targetEntity = ReservationDetail.class)
+    @OneToMany(mappedBy = "reservNo", cascade = CascadeType.ALL, targetEntity = ReservationDetail.class)
     @MapsId("reservNo")
     private List<ReservationDetail> reservationDetailList;
 

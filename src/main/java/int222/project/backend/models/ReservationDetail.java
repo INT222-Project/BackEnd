@@ -14,23 +14,23 @@ public class ReservationDetail {
     @Id
     private String reservDetailId;
     @ManyToOne
-    @JoinColumn(name= "reservno")
+    @JoinColumn(name = "reservno")
     @JsonBackReference
     private Reservation reservNo;
     @ManyToOne
     @JoinColumn(name = "roomid")
     private Room room;
     @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "UTC")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "UTC")
     private Date checkInDate;
     @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "UTC")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "UTC")
     private Date checkOutDate;
     private int numOfRest;
     private double total;
     private String status;
     @JsonManagedReference
-    @OneToMany(mappedBy = "reservDetailId",cascade = CascadeType.ALL,targetEntity = PackageDetail.class)
+    @OneToMany(mappedBy = "reservDetailId", cascade = CascadeType.ALL, targetEntity = PackageDetail.class)
     @MapsId("reservDetailId")
     private List<PackageDetail> packageDetailList;
 
