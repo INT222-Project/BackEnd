@@ -136,15 +136,13 @@ public class ReservationController {
                 reservationDetail.setPackageDetailList(packageDetailList);
                 System.out.println("total reservation detail price last : " + total);
                 this.reservationDetailRepository.save(reservationDetail);
-                double newTotal = total;
+                double newTotal = 0;
                 List<ReservationDetail> reservationDetailList = this.reservationDetailRepository.getAllReservationDetailsByReservNo(reservation.getReservNo());
                 for (ReservationDetail tempReservationDetail : reservationDetailList) {
-                    if(!tempReservationDetail.getReservDetailId().equals(reservationDetail.getReservDetailId())){
                         newTotal += tempReservationDetail.getTotal();
-                    }
                 }
                 reservation.setSubTotal(newTotal);
-                this.reservationRepository.save(reservation);
+                return ResponseEntity.ok(this.reservationRepository.save(reservation));
             }
             // when customer don't need packages anymore
             else{
