@@ -143,7 +143,7 @@ public class ReservationController {
                 for (ReservationDetail tempReservationDetail : reservationDetailList) {
                     double tempTotal = tempReservationDetail.getTotal();
                     // calculate amount of days
-                    long numOfDate = TimeUnit.DAYS.convert(tempReservationDetail.getCheckInDate().getTime() - tempReservationDetail.getCheckOutDate().getTime(), TimeUnit.MILLISECONDS);
+                    long numOfDate = TimeUnit.DAYS.convert(tempReservationDetail.getCheckOutDate().getTime() - tempReservationDetail.getCheckInDate().getTime(), TimeUnit.MILLISECONDS);
                     System.out.println("amount of days :" + numOfDate);
                     double roomCharge = tempReservationDetail.getRoom().getRoomCharge();
                     double onlyPackagePrice = tempTotal - roomCharge; // it would not be less than 0 (surely)
