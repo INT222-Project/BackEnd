@@ -16,8 +16,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
 @RestController
@@ -74,7 +76,7 @@ public class ReservationController {
         Reservation reservation = this.reservationRepository.findById(reservNo).orElse(null);
         ReservationDetail reservationDetail = this.reservationDetailRepository.findById(reservDetailId).orElse(null);
         if (reservation != null && reservationDetail != null) {
-            double total = reservationDetail.getTotal();
+            double total = reservationDetail.getTotal(); // total price in reservation detail
             System.out.println("total reservation detail price first : " + total);
             List<PackageDetail> packageDetailList = this.packageDetailRepository.getAllPackageDetailsByReservationDetail(reservDetailId);
             // create temp package detail list to get package detail want to delete
@@ -132,21 +134,27 @@ public class ReservationController {
                     }
                 }
                 // set new package detail in reservation detail
-                reservationDetail.setTotal(total);
+                reservationDetail.setTotal(total); // room charge + package price = total in reservation detail
                 reservationDetail.setPackageDetailList(packageDetailList);
                 System.out.println("total reservation detail price last : " + total);
                 this.reservationDetailRepository.save(reservationDetail);
                 double newTotal = 0;
                 List<ReservationDetail> reservationDetailList = this.reservationDetailRepository.getAllReservationDetailsByReservNo(reservation.getReservNo());
                 for (ReservationDetail tempReservationDetail : reservationDetailList) {
-                        newTotal += tempReservationDetail.getTotal();
+                    double tempTotal = tempReservationDetail.getTotal();
+                    // calculate amount of days
+                    long numOfDate = TimeUnit.DAYS.convert(tempReservationDetail.getCheckInDate().getTime() - tempReservationDetail.getCheckOutDate().getTime(), TimeUnit.MILLISECONDS);
+                    System.out.println("amount of days :" + numOfDate);
+                    double roomCharge = tempReservationDetail.getRoom().getRoomCharge();
+                    double onlyPackagePrice = tempTotal - roomCharge; // it would not be less than 0 (surely)
+                    newTotal += (numOfDate * roomCharge) + onlyPackagePrice;
                 }
                 reservation.setSubTotal(newTotal);
                 return ResponseEntity.ok(this.reservationRepository.save(reservation));
             }
             // when customer don't need packages anymore
-            else{
-                for(PackageDetail packageDetail : packageDetailList){
+            else {
+                for (PackageDetail packageDetail : packageDetailList) {
                     total -= packageDetail.getPackageCharge();
                 }
                 this.packageDetailRepository.deleteAll(packageDetailList);
@@ -156,7 +164,7 @@ public class ReservationController {
                 double newTotal = total;
                 List<ReservationDetail> reservationDetailList = this.reservationDetailRepository.getAllReservationDetailsByReservNo(reservation.getReservNo());
                 for (ReservationDetail tempReservationDetail : reservationDetailList) {
-                    if(!tempReservationDetail.getReservDetailId().equals(reservationDetail.getReservDetailId())){
+                    if (!tempReservationDetail.getReservDetailId().equals(reservationDetail.getReservDetailId())) {
                         newTotal += tempReservationDetail.getTotal();
                     }
                 }
@@ -164,7 +172,7 @@ public class ReservationController {
                 return ResponseEntity.ok(this.reservationRepository.save(reservation));
             }
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error("Sorry Reservation no #"+ reservNo+" and Reservation Detail Id #"+reservDetailId+" could not edit packages." ,400));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error("Sorry Reservation no #" + reservNo + " and Reservation Detail Id #" + reservDetailId + " could not edit packages.", 400));
     }
 
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -188,7 +196,7 @@ public class ReservationController {
             // calculate package price before adding to reservationdetail
             List<Package> packages = reservationRequirement.getPackages();
             double pricePackage = 0;
-            for(Package packagee : packages){
+            for (Package packagee : packages) {
                 pricePackage += packagee.getPackageCharge();
             }
             ReservationDetail tempReservationDetail = new ReservationDetail(reservationDetailId, tempReservation, reservationRequirement.getRoom(), reservationRequirement.getCheckInDate(), reservationRequirement.getCheckOutDate(), reservationRequirement.getNumOfRest(), reservationRequirement.getRoom().getRoomCharge() + pricePackage, "undone", null);
