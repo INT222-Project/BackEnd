@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface RoomRepository extends JpaRepository<Room,Integer> {
+public interface RoomRepository extends JpaRepository<Room, Integer> {
     @Override
     @Query("select r from Room r order by r.roomNo")
     List<Room> findAll();

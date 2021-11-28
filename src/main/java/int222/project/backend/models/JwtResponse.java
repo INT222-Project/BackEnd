@@ -16,17 +16,15 @@ public class JwtResponse<T> implements Serializable {
 
     public JwtResponse(String jwttoken, T object, Collection<? extends GrantedAuthority> role) {
         this.jwttoken = jwttoken;
-        if(object.getClass() == Customer.class){
+        if (object.getClass() == Customer.class) {
             String encodePassword = passwordEncoder.encode(((Customer) object).getPassword());
             ((Customer) object).setPassword(encodePassword);
             this.object = object;
-        }
-        else if(object.getClass() == Receptionist.class){
+        } else if (object.getClass() == Receptionist.class) {
             String encodePassword = passwordEncoder.encode(((Receptionist) object).getPassword());
             ((Receptionist) object).setPassword(encodePassword);
             this.object = object;
-        }
-        else if(object.getClass() == Admin.class){
+        } else if (object.getClass() == Admin.class) {
             String encodePassword = passwordEncoder.encode(((Admin) object).getPassword());
             ((Admin) object).setPassword(encodePassword);
             this.object = object;
@@ -34,7 +32,7 @@ public class JwtResponse<T> implements Serializable {
         this.role = role;
     }
 
-    private BCryptPasswordEncoder passwordEncoder(){
+    private BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

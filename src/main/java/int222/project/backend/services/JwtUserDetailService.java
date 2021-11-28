@@ -29,28 +29,25 @@ public class JwtUserDetailService implements UserDetailsService {
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    public AuthenticationUser loadUserByUsername(String s) throws UsernameNotFoundException{
+    public AuthenticationUser loadUserByUsername(String s) throws UsernameNotFoundException {
         Customer customer = customerRepository.findCustomerByEmail(s).orElse(null);
         Receptionist receptionist = receptionistRepository.findReceptionistByEmail(s).orElse(null);
-        if(customer != null){
+        if (customer != null) {
             Role role = new Role("customer");
-            List<Role> roles= new ArrayList<>();
+            List<Role> roles = new ArrayList<>();
             roles.add(role);
-            return new AuthenticationUser(customer.getEmail(),bCryptPasswordEncoder.encode(customer.getPassword()),roles);
-        }
-        else if(receptionist != null){
+            return new AuthenticationUser(customer.getEmail(), bCryptPasswordEncoder.encode(customer.getPassword()), roles);
+        } else if (receptionist != null) {
             Role role = new Role("receptionist");
-            List<Role> roles= new ArrayList<>();
+            List<Role> roles = new ArrayList<>();
             roles.add(role);
-            return new AuthenticationUser(receptionist.getEmail(),bCryptPasswordEncoder.encode(receptionist.getPassword()),roles);
-        }
-        else if(s.equals("admin")){
+            return new AuthenticationUser(receptionist.getEmail(), bCryptPasswordEncoder.encode(receptionist.getPassword()), roles);
+        } else if (s.equals("admin")) {
             Role role = new Role("admin");
             List<Role> roles = new ArrayList<>();
             roles.add(role);
-            return new AuthenticationUser(s,bCryptPasswordEncoder.encode("admin"),roles);
-        }
-        else{
+            return new AuthenticationUser(s, bCryptPasswordEncoder.encode("admin"), roles);
+        } else {
             throw new UsernameNotFoundException("User not found with username: " + s);
         }
     }

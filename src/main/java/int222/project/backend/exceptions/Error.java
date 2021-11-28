@@ -1,6 +1,6 @@
 package int222.project.backend.exceptions;
 
-public class Error{
+public class Error {
     private String message;
     private int code;
 

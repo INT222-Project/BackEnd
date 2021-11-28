@@ -40,53 +40,54 @@ public class RoomController {
     RoomRepository roomRepository;
     @Autowired
     UploadService uploadService;
+
     // Room
     @PostMapping("/uploadImage/{roomId}")
-    public void uploadImage(@RequestParam("image-file") MultipartFile imageFile,@PathVariable int roomId) throws IOException {
-        uploadService.saveImage(imageFile,Integer.toString(roomId),Room.class);
+    public void uploadImage(@RequestParam("image-file") MultipartFile imageFile, @PathVariable int roomId) throws IOException {
+        uploadService.saveImage(imageFile, Integer.toString(roomId), Room.class);
     }
 
     @GetMapping(path = "/showImage/{roomId}")
-    public ResponseEntity<?> showImage(@PathVariable int roomId){
+    public ResponseEntity<?> showImage(@PathVariable int roomId) {
         try {
-            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(Integer.toString(roomId),Room.class));
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(Integer.toString(roomId), Room.class));
         } catch (ImageHandlerException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error(e.getMessage() +" and error code : "+ e.getErrorCode(),e.getErrorCode().hashCode()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error(e.getMessage() + " and error code : " + e.getErrorCode(), e.getErrorCode().hashCode()));
         }
     }
-    @DeleteMapping(path="/deleteImage/{roomId}")
-    public ResponseEntity<?> deleteImage(@PathVariable int roomId){
-        uploadService.deleteImage(Integer.toString(roomId),Room.class);
+
+    @DeleteMapping(path = "/deleteImage/{roomId}")
+    public ResponseEntity<?> deleteImage(@PathVariable int roomId) {
+        uploadService.deleteImage(Integer.toString(roomId), Room.class);
         return ResponseEntity.ok().body("Successful delete image");
     }
+
     @GetMapping("/roomRequirement/{roomTypeId}")
-    public List<Room> getRoomRequireRoomType(@PathVariable int roomTypeId){
+    public List<Room> getRoomRequireRoomType(@PathVariable int roomTypeId) {
         return roomRepository.findAllRoomType(roomTypeId);
     }
 
     @GetMapping("/getRemainingRoom/{checkIn}/{checkOut}")
-    public List<RemainingRoomObject> getRemainingRoom(@PathVariable String checkIn, @PathVariable String checkOut){
+    public List<RemainingRoomObject> getRemainingRoom(@PathVariable String checkIn, @PathVariable String checkOut) {
         List<RemainingRoomObject> remainingRoomObjects = new ArrayList<>();
-        try{
+        try {
             Class.forName(driverName);
-            Connection connection = DriverManager.getConnection(this.url,this.username,this.password);
+            Connection connection = DriverManager.getConnection(this.url, this.username, this.password);
             String query
-                    = "select t1.roomtypeid, t1.bedtype,t2.amount_room - t1.reserved_room as remaining_room from (select r.roomtypeid , r.bedtype , count(*) as reserved_room from reservationdetail rd join room r on rd.roomid = r.roomid where rd.status != 'undone' and rd.status != 'check-out' and rd.checkindate >= '"+ checkIn + "' and rd.checkoutdate <= '"+ checkOut +"' group by r.roomtypeid, r.bedtype) t1 join (select r.roomtypeid , r.bedtype , count(*) as amount_room from room r where r.status != 'mock-up' group by r.roomtypeid, r.bedtype) t2 on t1.roomtypeid = t2.roomtypeid where t1.bedtype = t2.bedtype order by roomtypeid asc;";
+                    = "select t1.roomtypeid, t1.bedtype,t2.amount_room - t1.reserved_room as remaining_room from (select r.roomtypeid , r.bedtype , count(*) as reserved_room from reservationdetail rd join room r on rd.roomid = r.roomid where rd.status != 'undone' and rd.status != 'check-out' and rd.checkindate >= '" + checkIn + "' and rd.checkoutdate <= '" + checkOut + "' group by r.roomtypeid, r.bedtype) t1 join (select r.roomtypeid , r.bedtype , count(*) as amount_room from room r where r.status != 'mock-up' group by r.roomtypeid, r.bedtype) t2 on t1.roomtypeid = t2.roomtypeid where t1.bedtype = t2.bedtype order by roomtypeid asc;";
             System.out.println(query);
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
-            while (rs.next())
-            {
+            while (rs.next()) {
                 int roomtypeid = rs.getInt("roomtypeid");
                 String bedtype = rs.getString("bedtype");
                 int count = rs.getInt("remaining_room");
-                System.out.printf("%s, %s, %s \n", roomtypeid,bedtype,count);
-                RemainingRoomObject temp = new RemainingRoomObject(roomtypeid,bedtype,count);
+                System.out.printf("%s, %s, %s \n", roomtypeid, bedtype, count);
+                RemainingRoomObject temp = new RemainingRoomObject(roomtypeid, bedtype, count);
                 remainingRoomObjects.add(temp);
             }
             statement.close();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.err.println("Got an exception !");
             System.err.println(e.getMessage());
         }
@@ -94,60 +95,66 @@ public class RoomController {
     }
 
     @GetMapping("/{roomId}")
-    public Room getRoom (@PathVariable int roomId){ return roomRepository.findById(roomId).orElse(null); }
+    public Room getRoom(@PathVariable int roomId) {
+        return roomRepository.findById(roomId).orElse(null);
+    }
 
     @GetMapping("")
-    public List<Room> getAllRooms(){ return roomRepository.findAll(); }
+    public List<Room> getAllRooms() {
+        return roomRepository.findAll();
+    }
 
     @GetMapping("/available")
-    public List<Room> getAvailableRooms(){return roomRepository.findAvailableRooms();}
+    public List<Room> getAvailableRooms() {
+        return roomRepository.findAvailableRooms();
+    }
 
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addRoom(@RequestPart("newRoom") Room room, @RequestParam("image-file") MultipartFile file){
+    public ResponseEntity<?> addRoom(@RequestPart("newRoom") Room room, @RequestParam("image-file") MultipartFile file) {
         int latestRoomId = 0;
         List<Room> getAllRoom = roomRepository.findAll();
-        for(int i = 0 ; i < getAllRoom.size() ; i++){
-            if(i+1 == getAllRoom.size() - 1) break;
+        for (int i = 0; i < getAllRoom.size(); i++) {
+            if (i + 1 == getAllRoom.size() - 1) break;
             int id = getAllRoom.get(i).getRoomId();
-            int nextId = getAllRoom.get(i+1).getRoomId();
-            if((id+1) != nextId) {
+            int nextId = getAllRoom.get(i + 1).getRoomId();
+            if ((id + 1) != nextId) {
                 latestRoomId = id;
                 break;
             }
         }
-        if(latestRoomId == 0) latestRoomId = getAllRoom.get(getAllRoom.size()-1).getRoomId();
-        room.setRoomId(latestRoomId+1);
+        if (latestRoomId == 0) latestRoomId = getAllRoom.get(getAllRoom.size() - 1).getRoomId();
+        room.setRoomId(latestRoomId + 1);
         try {
-            uploadImage(file,room.getRoomId());
+            uploadImage(file, room.getRoomId());
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error("Sorry, We could not save your image file.",500));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error("Sorry, We could not save your image file.", 500));
         }
         System.out.println(room.toString());
         return ResponseEntity.ok(this.roomRepository.save(room));
     }
 
     @PutMapping(path = "/edit/{roomId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> editRoom(@PathVariable int roomId , @RequestPart("editRoom") Room room, @RequestParam(value = "image-file",required = false) MultipartFile file){
+    public ResponseEntity<?> editRoom(@PathVariable int roomId, @RequestPart("editRoom") Room room, @RequestParam(value = "image-file", required = false) MultipartFile file) {
         Room temp = roomRepository.findById(roomId).orElse(null);
-        if(temp != null){
+        if (temp != null) {
             temp = room;
         }
-        if(file != null) {
+        if (file != null) {
             try {
-                uploadImage(file,temp.getRoomId());
+                uploadImage(file, temp.getRoomId());
             } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error("Sorry, We could not save your image file.",500));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error("Sorry, We could not save your image file.", 500));
             }
         }
         return ResponseEntity.ok(roomRepository.saveAndFlush(temp));
     }
 
     @DeleteMapping(path = "/delete/{roomId}")
-    public void deleteRoom(@PathVariable int roomId){
+    public void deleteRoom(@PathVariable int roomId) {
         Room temp = roomRepository.findById(roomId).orElse(null);
-        if(temp != null){
+        if (temp != null) {
             roomRepository.delete(temp);
-            uploadService.deleteImage(Integer.toString(roomId),Room.class);
+            uploadService.deleteImage(Integer.toString(roomId), Room.class);
         }
     }
 

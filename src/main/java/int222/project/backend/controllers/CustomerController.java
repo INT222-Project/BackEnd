@@ -36,7 +36,7 @@ public class CustomerController {
         try {
             return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(customerId, Customer.class));
         } catch (ImageHandlerException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage() +" and error code : "+ e.getErrorCode());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage() + " and error code : " + e.getErrorCode());
         }
     }
 

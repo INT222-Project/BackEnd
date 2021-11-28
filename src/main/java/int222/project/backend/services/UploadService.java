@@ -59,11 +59,9 @@ public class UploadService {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ImageIO.write(image, imageFilter.getExtension(file), bos);
             data = bos.toByteArray();
-        }
-        catch (ImageHandlerException e){
+        } catch (ImageHandlerException e) {
             throw new ImageHandlerException(e.getMessage(), e.getErrorCode());
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
         return data;
@@ -99,7 +97,7 @@ public class UploadService {
         }
     }
 
-    private File getRoomFile(String id) throws ImageHandlerException, IOException{
+    private File getRoomFile(String id) throws ImageHandlerException, IOException {
         String folder = new File(".").getCanonicalPath() + "/src/main/resources/storage/room-storage/";
         File file = getFile(id, folder);
         if (file != null) {

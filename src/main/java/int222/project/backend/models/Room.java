@@ -3,17 +3,17 @@ package int222.project.backend.models;
 import javax.persistence.*;
 
 @Entity
-@Table(name="room")
+@Table(name = "room")
 public class Room {
     @Id
     private int roomId;
     private String roomNo;
     @ManyToOne
-    @JoinColumn(name="roomtypeid")
+    @JoinColumn(name = "roomtypeid")
     private RoomType roomType;
     private double roomCharge;
     private String bedType;
-    @Column(name="status")
+    @Column(name = "status")
     private String status;
 
     public Room() {

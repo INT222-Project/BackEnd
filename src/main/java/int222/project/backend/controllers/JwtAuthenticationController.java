@@ -161,14 +161,14 @@ public class JwtAuthenticationController {
         if (role.equals("receptionist")) {
             Receptionist temp = this.receptionistRepository.findById(id).orElse(null);
             if (temp != null) {
-                this.uploadService.deleteImage(id,Receptionist.class);
+                this.uploadService.deleteImage(id, Receptionist.class);
                 this.receptionistRepository.delete(temp);
                 return ResponseEntity.ok(temp);
             }
         } else if (role.equals("customer")) {
             Customer temp = this.customerRepository.findById(id).orElse(null);
             if (temp != null) {
-                this.uploadService.deleteImage(id,Customer.class);
+                this.uploadService.deleteImage(id, Customer.class);
                 this.customerRepository.delete(temp);
                 return ResponseEntity.ok(temp);
             }

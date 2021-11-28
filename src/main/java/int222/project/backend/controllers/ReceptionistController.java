@@ -36,7 +36,7 @@ public class ReceptionistController {
         try {
             return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(repId, Receptionist.class));
         } catch (ImageHandlerException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage() +" and error code : "+ e.getErrorCode());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage() + " and error code : " + e.getErrorCode());
         }
     }
 

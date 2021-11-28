@@ -3,7 +3,7 @@ package int222.project.backend.models;
 import javax.persistence.*;
 
 @Entity
-@Table(name="receptionist")
+@Table(name = "receptionist")
 public class Receptionist {
     @Id
     private String repId;

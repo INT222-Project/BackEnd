@@ -21,21 +21,25 @@ public class ReservationDetailController {
 
     // Reservation Detail
     @GetMapping("/{reservDetailId}")
-    public ReservationDetail getReservationDetail (@PathVariable String reservDetailId){ return reservationDetailRepository.findById(reservDetailId).orElse(null); }
+    public ReservationDetail getReservationDetail(@PathVariable String reservDetailId) {
+        return reservationDetailRepository.findById(reservDetailId).orElse(null);
+    }
 
     @GetMapping("")
-    public List<ReservationDetail> getAllReservationDetails(){
+    public List<ReservationDetail> getAllReservationDetails() {
         return reservationDetailRepository.findAll();
     }
 
     @GetMapping("/byReservationNo/{reservNo}")
-    public List<ReservationDetail> getAllReservationDetailsByReservNo(@PathVariable String reservNo){
+    public List<ReservationDetail> getAllReservationDetailsByReservNo(@PathVariable String reservNo) {
         Reservation reservation = reservationRepository.findById(reservNo).orElse(null);
         return reservationDetailRepository.getAllReservationDetailsByReservNo(reservation.getReservNo());
     }
 
     @GetMapping("/reservedReservationDetail")
-    public List<ReservationDetail> getReservedReservationDetail(){ return reservationDetailRepository.getReservedReservationDetail();}
+    public List<ReservationDetail> getReservedReservationDetail() {
+        return reservationDetailRepository.getReservedReservationDetail();
+    }
 
 
 }

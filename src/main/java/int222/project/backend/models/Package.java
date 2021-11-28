@@ -5,7 +5,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="package")
+@Table(name = "package")
 public class Package {
     @Id
     private String packageId;
@@ -17,7 +17,7 @@ public class Package {
 
     }
 
-    public Package(String packageId, String name, String description, double packageCharge){
+    public Package(String packageId, String name, String description, double packageCharge) {
         this.packageId = packageId;
         this.name = name;
         this.description = description;

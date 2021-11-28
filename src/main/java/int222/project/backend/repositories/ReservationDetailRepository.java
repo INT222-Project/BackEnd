@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface ReservationDetailRepository extends JpaRepository <ReservationDetail,String> {
+public interface ReservationDetailRepository extends JpaRepository<ReservationDetail, String> {
 
     @Query("select rd from ReservationDetail rd inner join Reservation r on  rd.reservNo = r.reservNo where r.reservNo = ?1")
     List<ReservationDetail> getAllReservationDetailsByReservNo(String reservNo);
