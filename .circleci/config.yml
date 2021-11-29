@@ -1,0 +1,17 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: cimg/node:14.10.1 # the primary container, where your job's commands are run
+    steps:
+      - checkout # check out the code in the project directory
+      - run: echo "hello world" # run the `echo` command
+      - add_ssh_keys: 
+          fingerprints: 
+            - "15:a2:44:92:9c:e8:5b:4c:de:8c:ec:c1:ec:19:eb:e8"
+      - run: 
+          name: Get inside VM
+          command: ssh -o StrictHostKeyChecking=no int222@52.163.87.230
+                   "ls -la ;"
+                   "chmod +x ./BackEnd/script.sh ; ./BackEnd/script.sh ;"
+          
