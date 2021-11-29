@@ -1,4 +1,4 @@
-echo "Inside Shell Script" ;
+echo "Inside Shell Script yay !" ;
 cd BackEnd ;
 ls -la ;
 git status ;
