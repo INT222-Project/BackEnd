@@ -38,29 +38,6 @@ public class RoomController {
     String password;
     @Autowired
     RoomRepository roomRepository;
-    @Autowired
-    UploadService uploadService;
-
-    // Room
-    @PostMapping("/uploadImage/{roomId}")
-    public void uploadImage(@RequestParam("image-file") MultipartFile imageFile, @PathVariable int roomId) throws IOException {
-        uploadService.saveImage(imageFile, Integer.toString(roomId), Room.class);
-    }
-
-    @GetMapping(path = "/showImage/{roomId}")
-    public ResponseEntity<?> showImage(@PathVariable int roomId) {
-        try {
-            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(uploadService.get(Integer.toString(roomId), Room.class));
-        } catch (ImageHandlerException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error(e.getMessage() + " and error code : " + e.getErrorCode(), e.getErrorCode().hashCode()));
-        }
-    }
-
-    @DeleteMapping(path = "/deleteImage/{roomId}")
-    public ResponseEntity<?> deleteImage(@PathVariable int roomId) {
-        uploadService.deleteImage(Integer.toString(roomId), Room.class);
-        return ResponseEntity.ok().body("Successful delete image");
-    }
 
     @GetMapping("/roomRequirement/{roomTypeId}")
     public List<Room> getRoomRequireRoomType(@PathVariable int roomTypeId) {
@@ -110,7 +87,7 @@ public class RoomController {
     }
 
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addRoom(@RequestPart("newRoom") Room room, @RequestParam("image-file") MultipartFile file) {
+    public ResponseEntity<?> addRoom(@RequestPart("newRoom") Room room) {
         int latestRoomId = 0;
         List<Room> getAllRoom = roomRepository.findAll();
         for (int i = 0; i < getAllRoom.size(); i++) {
@@ -124,11 +101,6 @@ public class RoomController {
         }
         if (latestRoomId == 0) latestRoomId = getAllRoom.get(getAllRoom.size() - 1).getRoomId();
         room.setRoomId(latestRoomId + 1);
-        try {
-            uploadImage(file, room.getRoomId());
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error("Sorry, We could not save your image file.", 500));
-        }
         System.out.println(room.toString());
         return ResponseEntity.ok(this.roomRepository.save(room));
     }
@@ -138,15 +110,9 @@ public class RoomController {
         Room temp = roomRepository.findById(roomId).orElse(null);
         if (temp != null) {
             temp = room;
+            return ResponseEntity.ok(roomRepository.saveAndFlush(temp));
         }
-        if (file != null) {
-            try {
-                uploadImage(file, temp.getRoomId());
-            } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error("Sorry, We could not save your image file.", 500));
-            }
-        }
-        return ResponseEntity.ok(roomRepository.saveAndFlush(temp));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Error("Cannot edit room." + roomId,400));
     }
 
     @DeleteMapping(path = "/delete/{roomId}")
@@ -154,7 +120,6 @@ public class RoomController {
         Room temp = roomRepository.findById(roomId).orElse(null);
         if (temp != null) {
             roomRepository.delete(temp);
-            uploadService.deleteImage(Integer.toString(roomId), Room.class);
         }
     }
 
