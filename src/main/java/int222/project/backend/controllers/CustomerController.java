@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
+//@CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {

@@ -23,7 +23,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
+//@CrossOrigin(origins = {"http://localhost:8080"}, allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
